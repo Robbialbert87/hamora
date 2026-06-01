@@ -97,6 +97,7 @@
         .nav-dropdown-divider { height: 1px; background: var(--glass-border); margin: 4px 8px; }
         .nav-profile-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
         .nav-profile-role { font-size: 11px; color: var(--text-muted); }
+        @media (max-width: 992px) { .sidebar, .sidebar.open { background: #0f1512 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-image: none !important; } [data-theme="light"] .sidebar, [data-theme="light"] .sidebar.open { background: #f0f0ea !important; } }
     </style>
 </head>
 <body>
@@ -288,19 +289,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var menuToggle = document.getElementById('mobile-menu-toggle');
-            var sidebar = document.getElementById('sidebar');
-            if (menuToggle && sidebar) {
-                menuToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('open');
-                });
-                document.addEventListener('click', function(e) {
-                    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                        sidebar.classList.remove('open');
-                    }
-                });
-            }
-
             var profileToggle = document.getElementById('profileDropdownToggle');
             var profileDropdown = document.getElementById('profileDropdown');
             if (profileToggle && profileDropdown) {

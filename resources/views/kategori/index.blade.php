@@ -65,6 +65,7 @@
 <script>
     $(document).ready(function() {
         $('#kategori-table').DataTable({
+            responsive: true,
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.11/i18n/id.json'
             }

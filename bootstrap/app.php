@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.active' => \App\Http\Middleware\CheckUserActive::class,
         ]);
+
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

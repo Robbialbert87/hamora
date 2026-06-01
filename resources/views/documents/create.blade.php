@@ -110,7 +110,7 @@
                         <input type="file" name="file_pdf" class="form-control @error('file_pdf') is-invalid @enderror"
                                accept="application/pdf" required>
                         @error('file_pdf') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        <div class="text-muted mt-1" style="font-size: 12px;">Format: PDF, Maks: 10MB</div>
+                        <div class="text-muted mt-1" style="font-size: 12px;">Format: PDF, Maks: 20MB</div>
                     </div>
                 </div>
             </div>

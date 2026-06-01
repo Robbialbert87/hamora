@@ -21,12 +21,8 @@
         {{-- Filter Row --}}
         <div class="filter-row">
             <div class="form-group">
-                <label class="form-label">Nomor Dokumen</label>
-                <input type="text" id="filter-nomor" class="form-control" placeholder="Cari nomor...">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Nama Dokumen</label>
-                <input type="text" id="filter-nama" class="form-control" placeholder="Cari nama...">
+                <label class="form-label">Nomor/Nama Dokumen</label>
+                <input type="text" id="filter-nama" class="form-control" placeholder="Cari dokumen...">
             </div>
             <div class="form-group">
                 <label class="form-label">Tahun</label>
@@ -102,7 +98,6 @@
             ajax: {
                 url: '{{ route("documents.data") }}',
                 data: function(d) {
-                    d.nomor_dokumen = $('#filter-nomor').val();
                     d.nama_dokumen = $('#filter-nama').val();
                     d.tahun = $('#filter-tahun').val();
                     d.bidang_id = $('#filter-bidang').val();
@@ -111,6 +106,8 @@
                     d.global_search = $('#global-search').val();
                 }
             },
+            responsive: false,
+            scrollX: true,
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'nomor_dokumen', name: 'nomor_dokumen' },
@@ -141,7 +138,6 @@
         });
 
         $('#btn-reset').on('click', function() {
-            $('#filter-nomor').val('');
             $('#filter-nama').val('');
             $('#filter-tahun').val('');
             $('#filter-bidang').val('');
@@ -150,7 +146,7 @@
             table.draw();
         });
 
-        $('#filter-nomor, #filter-nama').on('keyup', function(e) {
+        $('#filter-nama').on('keyup', function(e) {
             if (e.key === 'Enter') {
                 table.draw();
             }

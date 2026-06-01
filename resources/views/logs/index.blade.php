@@ -36,6 +36,7 @@
         $('#logs-table').DataTable({
             processing: true,
             serverSide: true,
+            responsive: true,
             ajax: '{{ route("logs.data") }}',
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },

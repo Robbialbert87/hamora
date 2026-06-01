@@ -41,7 +41,7 @@ class ActivityLogController extends Controller
                     'hapus_permanen' => 'dark',
                 ];
                 $color = $colors[$log->action] ?? 'secondary';
-                return "<span class=\"badge bg-{$color}\">{$log->action}</span>";
+                return "<span class=\"badge bg-{$color}\">" . e($log->action) . "</span>";
             })
             ->rawColumns(['action_badge'])
             ->make(true);

@@ -80,17 +80,17 @@ class DocumentController extends Controller
             ->addColumn('status_badge', function ($doc) {
                 $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa'];
                 $colors = ['draft' => 'warning', 'aktif' => 'success', 'direvisi' => 'info', 'kadaluarsa' => 'danger'];
-                $label = $labels[$doc->status] ?? $doc->status;
+                $label = $labels[$doc->status] ?? e($doc->status);
                 $color = $colors[$doc->status] ?? 'secondary';
                 return "<span class=\"badge bg-{$color}\">{$label}</span>";
             })
             ->addColumn('action', function ($doc) {
-                $btn = '<a href="' . route('documents.show', $doc->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>';
+                $btn = '<a href="' . e(route('documents.show', $doc->id)) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>';
                 if (auth()->user()->can('edit dokumen')) {
-                    $btn .= ' <a href="' . route('documents.edit', $doc->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>';
+                    $btn .= ' <a href="' . e(route('documents.edit', $doc->id)) . '" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>';
                 }
                 if (auth()->user()->can('hapus dokumen')) {
-                    $btn .= ' <button class="btn btn-sm btn-danger btn-delete" data-url="' . route('documents.destroy', $doc->id) . '" data-name="' . $doc->nama_dokumen . '"><i class="fas fa-trash"></i></button>';
+                    $btn .= ' <button class="btn btn-sm btn-danger btn-delete" data-url="' . e(route('documents.destroy', $doc->id)) . '" data-name="' . e($doc->nama_dokumen) . '"><i class="fas fa-trash"></i></button>';
                 }
                 return $btn;
             })

@@ -95,15 +95,46 @@
         const sidebar = document.getElementById('sidebar');
 
         if (menuToggle && sidebar) {
+            let overlay = document.querySelector('.sidebar-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'sidebar-overlay';
+                document.body.appendChild(overlay);
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            }
+
+            function openSidebar() {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
+
             menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
+                if (sidebar.classList.contains('open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            overlay.addEventListener('click', closeSidebar);
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 992) {
+                        closeSidebar();
+                    }
+                });
             });
 
             document.addEventListener('click', (e) => {
                 if (sidebar.classList.contains('open') &&
                     !sidebar.contains(e.target) &&
                     !menuToggle.contains(e.target)) {
-                    sidebar.classList.remove('open');
+                    closeSidebar();
                 }
             });
         }
@@ -114,10 +145,8 @@
 
         forms.forEach(form => {
             form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
                 let isValid = true;
-                const inputs = form.querySelectorAll('.form-input[required]');
+                const inputs = form.querySelectorAll('.form-input[required], .form-control[required]');
 
                 inputs.forEach(input => {
                     if (!input.value.trim()) {
@@ -137,11 +166,8 @@
                     }
                 }
 
-                if (isValid) {
-                    console.log('Form is valid');
-                    if (form.dataset.redirect) {
-                        window.location.href = form.dataset.redirect;
-                    }
+                if (!isValid) {
+                    e.preventDefault();
                 }
             });
         });

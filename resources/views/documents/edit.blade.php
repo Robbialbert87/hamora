@@ -128,7 +128,7 @@
                         </div>
                         @endif
                         <input type="file" name="file_pdf" class="form-control @error('file_pdf') is-invalid @enderror" accept="application/pdf">
-                        <div class="text-muted mt-1" style="font-size: 12px;">Kosongkan jika tidak ingin mengubah file. Format: PDF, Maks: 10MB</div>
+                        <div class="text-muted mt-1" style="font-size: 12px;">Kosongkan jika tidak ingin mengubah file. Format: PDF, Maks: 20MB</div>
                         @error('file_pdf') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>
