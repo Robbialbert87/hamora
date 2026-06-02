@@ -1,37 +1,6 @@
 (function() {
     'use strict';
 
-    function initThemeToggle() {
-        const themeToggle = document.getElementById('theme-toggle');
-        if (!themeToggle) return;
-
-        const iconSun = themeToggle.querySelector('.icon-sun');
-        const iconMoon = themeToggle.querySelector('.icon-moon');
-
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-
-            if (iconSun && iconMoon) {
-                if (theme === 'light') {
-                    iconSun.style.display = 'none';
-                    iconMoon.style.display = 'block';
-                } else {
-                    iconSun.style.display = 'block';
-                    iconMoon.style.display = 'none';
-                }
-            }
-        }
-
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        setTheme(savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-        });
-    }
-
     function initTiltEffect() {
         document.querySelectorAll('.glass-card-3d').forEach(card => {
             card.addEventListener('mousemove', (e) => {
@@ -217,39 +186,9 @@
             });
         });
 
-        const themeSelect = document.getElementById('theme-select');
-        if (themeSelect) {
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            themeSelect.value = currentTheme;
-
-            themeSelect.addEventListener('change', () => {
-                const theme = themeSelect.value;
-                if (theme === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-                } else {
-                    document.documentElement.setAttribute('data-theme', theme);
-                    localStorage.setItem('theme', theme);
-                }
-
-                const iconSun = document.querySelector('#theme-toggle .icon-sun');
-                const iconMoon = document.querySelector('#theme-toggle .icon-moon');
-                if (iconSun && iconMoon) {
-                    const effectiveTheme = document.documentElement.getAttribute('data-theme');
-                    if (effectiveTheme === 'light') {
-                        iconSun.style.display = 'none';
-                        iconMoon.style.display = 'block';
-                    } else {
-                        iconSun.style.display = 'block';
-                        iconMoon.style.display = 'none';
-                    }
-                }
-            });
-        }
     }
 
     function init() {
-        initThemeToggle();
         initTiltEffect();
         initCounters();
         initMobileMenu();

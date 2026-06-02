@@ -31,15 +31,7 @@
                     Notifications
                 </a>
             </li>
-            <li class="settings-nav-item">
-                <a href="#" class="settings-nav-link" data-tab="appearance">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
-                        <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
-                    </svg>
-                    Appearance
-                </a>
-            </li>
+
             <li class="settings-nav-item">
                 <a href="#" class="settings-nav-link" data-tab="billing">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -300,84 +292,6 @@
             </div>
         </div>
 
-        <div class="settings-tab-content" id="tab-appearance">
-            <div class="settings-section">
-                <h3 class="settings-section-title">Theme</h3>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Color Mode</span>
-                        <span class="settings-label-desc">Choose your preferred color mode</span>
-                    </div>
-                    <select class="settings-select" id="theme-select">
-                        <option value="dark">Dark Mode</option>
-                        <option value="light">Light Mode</option>
-                        <option value="system">System Default</option>
-                    </select>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Accent Color</span>
-                        <span class="settings-label-desc">Choose your preferred accent color</span>
-                    </div>
-                    <select class="settings-select">
-                        <option>Emerald (Default)</option>
-                        <option>Blue</option>
-                        <option>Purple</option>
-                        <option>Orange</option>
-                        <option>Pink</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3 class="settings-section-title">Display</h3>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Compact Mode</span>
-                        <span class="settings-label-desc">Reduce spacing for more content</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Animations</span>
-                        <span class="settings-label-desc">Enable smooth animations and transitions</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Blur Effects</span>
-                        <span class="settings-label-desc">Enable glassmorphism blur effects</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Floating Orbs</span>
-                        <span class="settings-label-desc">Show animated background orbs</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="btn-group">
-                <button class="btn btn-primary" style="width: auto;">Apply Changes</button>
-                <button class="btn btn-secondary" style="width: auto;">Reset to Default</button>
-            </div>
-        </div>
 
         <div class="settings-tab-content" id="tab-billing">
             <div class="settings-section">

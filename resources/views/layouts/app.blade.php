@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
     {{-- SweetAlert2 CSS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,11 +76,11 @@
         .pdf-toolbar span { font-size: 14px; color: var(--text-secondary); }
         .pdf-container { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: var(--border-radius); padding: 20px; min-height: 500px; display: flex; flex-direction: column; align-items: center; }
         .pdf-container canvas { max-width: 100%; height: auto !important; }
-        [data-theme="light"] .form-control, [data-theme="light"] .form-select { background: rgba(255,255,255,0.8); color: #1a1a1a; }
-        [data-theme="light"] .form-control:focus, [data-theme="light"] .form-select:focus { background: white; }
-        [data-theme="light"] .form-select option { background: white; color: #1a1a1a; }
-        [data-theme="light"] div.dataTables_wrapper div.dataTables_length select,
-        [data-theme="light"] div.dataTables_wrapper div.dataTables_filter input { background: rgba(255,255,255,0.8); color: #1a1a1a; border-color: rgba(0,0,0,0.1); }
+        .form-control, .form-select { background: rgba(255,255,255,0.8); color: #1a1a1a; }
+        .form-control:focus, .form-select:focus { background: white; }
+        .form-select option { background: white; color: #1a1a1a; }
+        div.dataTables_wrapper div.dataTables_length select,
+        div.dataTables_wrapper div.dataTables_filter input { background: rgba(255,255,255,0.8); color: #1a1a1a; border-color: rgba(0,0,0,0.1); }
         .action-btns { display: flex; gap: 6px; flex-wrap: nowrap; }
         .action-btns .btn { padding: 4px 10px; font-size: 12px; border-radius: 6px; }
         .nav-profile { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 12px; transition: all var(--transition-fast); cursor: pointer; text-decoration: none; color: inherit; }
@@ -97,7 +97,7 @@
         .nav-dropdown-divider { height: 1px; background: var(--glass-border); margin: 4px 8px; }
         .nav-profile-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
         .nav-profile-role { font-size: 11px; color: var(--text-muted); }
-        @media (max-width: 992px) { .sidebar, .sidebar.open { background: #0f1512 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-image: none !important; } [data-theme="light"] .sidebar, [data-theme="light"] .sidebar.open { background: #f0f0ea !important; } }
+        @media (max-width: 992px) { .sidebar, .sidebar.open { background: #f0f0ea !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-image: none !important; } }
     </style>
 </head>
 <body>
@@ -219,10 +219,6 @@
                     </div>
                     @endif
 
-                    <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
-                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
-                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </button>
 
                     <div class="nav-profile-dropdown">
                         <div class="nav-profile" id="profileDropdownToggle">
