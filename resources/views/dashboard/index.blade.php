@@ -54,6 +54,17 @@
     </div>
 </section>
 
+@can('kelola bidang')
+<div class="mb-4 d-flex" style="gap: 12px;">
+    <form action="{{ route('dashboard.notifikasi-kadaluarsa') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn-emerald btn-sm" onclick="return confirm('Kirim notifikasi dokumen kadaluarsa ke email?')">
+            <i class="fas fa-bell"></i> Kirim Notifikasi Kadaluarsa
+        </button>
+    </form>
+</div>
+@endcan
+
 <section class="content-grid">
     <div class="glass-card chart-card">
         <div class="card-header">
