@@ -22,7 +22,7 @@ class DocumentService
         }
 
         $data['uploaded_by'] = auth()->id();
-        $data['status'] = 'draft';
+        $data['status'] = $data['status'] ?? 'draft';
         $data['versi'] = 1;
 
         $document = Document::create($data);

@@ -29,6 +29,13 @@ class DocumentController extends Controller
         return view('documents.index', compact('bidang', 'kategori'));
     }
 
+    public function byStatus($status)
+    {
+        $bidang = Bidang::all();
+        $kategori = Kategori::all();
+        return view('documents.index', compact('bidang', 'kategori'))->with('defaultStatus', $status);
+    }
+
     public function data(Request $request)
     {
         $documents = Document::with(['bidang', 'kategori', 'uploader'])
@@ -128,6 +135,7 @@ class DocumentController extends Controller
             'deskripsi' => 'nullable',
             'file_pdf' => 'required|mimes:pdf|max:20480',
             'parent_document_id' => 'nullable|exists:documents,id',
+            'status' => 'required|in:draft,aktif,kadaluarsa',
         ]);
 
         $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? null;

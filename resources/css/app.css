@@ -15,9 +15,9 @@
     --bg-gradient-1: #e8f5e9;
     --bg-gradient-2: #f1f8e9;
     --bg-gradient-3: #fefefe;
-    --text-primary: #1a1a1a;
-    --text-secondary: rgba(26, 26, 26, 0.7);
-    --text-muted: rgba(26, 26, 26, 0.5);
+    --text-primary: #111111;
+    --text-secondary: rgba(17, 17, 17, 0.8);
+    --text-muted: rgba(17, 17, 17, 0.6);
     --success: #22c55e;
     --warning: #eab308;
     --danger: #dc2626;
@@ -68,6 +68,8 @@ a { text-decoration: none; color: inherit; }
 .nav-menu ul { list-style: none; padding: 0; margin: 0; }
 .nav-section { margin-bottom: 25px; list-style: none; }
 .nav-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 12px; padding-left: 15px; }
+.chevron-icon { width: 0.75em; height: 0.75em; transition: transform 0.3s ease; opacity: 0.5; }
+.nav-link[data-bs-toggle="collapse"]:not(.collapsed) .chevron-icon { transform: rotate(180deg); }
 .nav-item { margin-bottom: 5px; list-style: none; }
 .nav-link { display: flex; align-items: center; gap: 14px; padding: 14px 18px; color: var(--text-secondary); text-decoration: none; border-radius: 12px; transition: all var(--transition-fast); position: relative; overflow: hidden; justify-content: flex-start; text-align: left; }
 .nav-link:hover { background: var(--glass-hover); color: var(--text-primary); }
@@ -75,6 +77,12 @@ a { text-decoration: none; color: inherit; }
 .nav-icon { width: 22px; height: 22px; opacity: 0.8; }
 .nav-link.active .nav-icon, .nav-link:hover .nav-icon { opacity: 1; }
 .nav-badge { margin-left: auto; background: linear-gradient(135deg, var(--gold), var(--amber)); color: white; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
+.sub-nav-link { padding: 8px 18px 8px 50px; font-size: 13px; border-left: 2px solid transparent; border-radius: 0 8px 8px 0; gap: 10px; }
+.sub-nav-link:hover { border-left-color: var(--emerald-light); }
+.sub-nav-link.active { border-left-color: var(--emerald); background: transparent; color: var(--emerald); }
+.sub-nav-icon { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+.sub-nav-link.active .sub-nav-icon { opacity: 1; }
+.sub-nav-link:hover .sub-nav-icon { opacity: 0.9; }
 
 
 

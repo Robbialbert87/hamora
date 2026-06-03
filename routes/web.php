@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified', 'check.active'])->group(function () {
         Route::get('/', [DocumentController::class, 'index'])->name('index');
         Route::get('/data', [DocumentController::class, 'data'])->name('data');
         Route::get('/trashed', [DocumentController::class, 'trashed'])->name('trashed');
+        Route::get('/status/{status}', [DocumentController::class, 'byStatus'])->name('status');
         Route::get('/{document}/download', [DocumentController::class, 'download'])->name('download');
         Route::get('/{document}/preview', [DocumentController::class, 'preview'])->name('preview');
 

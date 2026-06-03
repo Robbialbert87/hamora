@@ -1,28 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Dokumen - HAMORA')
-@section('page-title', 'Dokumen')
+@section('title', isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen Aktif - HAMORA' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen Kadaluarsa - HAMORA' : (($defaultStatus ?? false) ? ucfirst($defaultStatus) . ' - HAMORA' : 'Dokumen - HAMORA')))
+@section('page-title', isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen Aktif' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen Kadaluarsa' : (($defaultStatus ?? false) ? ucfirst($defaultStatus) : 'Dokumen')))
 
 @section('content')
+@if(isset($defaultStatus) && in_array($defaultStatus, ['aktif', 'kadaluarsa']))
+<style>
+    #filter-group-kategori, #filter-group-status { display: none !important; }
+</style>
+@endif
 <section class="content-grid" style="grid-template-columns: 1fr;">
     <div class="glass-card table-card" style="grid-column: span 1;">
         <div class="card-header">
             <div>
                 <h2 class="card-title">Daftar Dokumen</h2>
-                <p class="card-subtitle">Kelola seluruh dokumen</p>
+                <p class="card-subtitle">{{ isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen yang sedang berlaku' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen yang sudah melewati masa berlaku' : 'Kelola seluruh dokumen') }}</p>
             </div>
             <div class="card-header-actions">
+                @if(!isset($defaultStatus) || !in_array($defaultStatus, ['aktif', 'kadaluarsa']))
                 <a href="{{ route('documents.create') }}" class="btn-emerald btn-sm">
                     <i class="fas fa-plus"></i> Upload Dokumen
                 </a>
+                @endif
             </div>
         </div>
 
         {{-- Filter Row --}}
         <div class="filter-row">
             <div class="form-group">
-                <label class="form-label">Nomor/Nama Dokumen</label>
-                <input type="text" id="filter-nama" class="form-control" placeholder="Cari dokumen...">
+                <label class="form-label">Cari Dokumen</label>
+                <input type="text" id="filter-nama" class="form-control" placeholder="Cari nomor atau nama dokumen...">
             </div>
             <div class="form-group">
                 <label class="form-label">Tahun</label>
@@ -42,7 +49,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="filter-group-kategori">
                 <label class="form-label">Kategori</label>
                 <select id="filter-kategori" class="form-select">
                     <option value="">Semua</option>
@@ -51,7 +58,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="filter-group-status">
                 <label class="form-label">Status</label>
                 <select id="filter-status" class="form-select">
                     <option value="">Semua</option>
@@ -92,20 +99,24 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+        @if(isset($defaultStatus))
+        $('#filter-status').val('{{ $defaultStatus }}');
+        @endif
+
         var table = $('#documents-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
                 url: '{{ route("documents.data") }}',
                 data: function(d) {
-                    d.nama_dokumen = $('#filter-nama').val();
+                    d.global_search = $('#filter-nama').val();
                     d.tahun = $('#filter-tahun').val();
                     d.bidang_id = $('#filter-bidang').val();
                     d.kategori_id = $('#filter-kategori').val();
                     d.status = $('#filter-status').val();
-                    d.global_search = $('#global-search').val();
                 }
             },
+            searching: false,
             responsive: false,
             scrollX: true,
             columns: [
@@ -126,7 +137,7 @@
 
         var searchTimeout;
 
-        $('#global-search').on('input', function() {
+        $('#filter-nama').on('input', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(function() {
                 table.draw();
@@ -144,12 +155,6 @@
             $('#filter-kategori').val('');
             $('#filter-status').val('');
             table.draw();
-        });
-
-        $('#filter-nama').on('keyup', function(e) {
-            if (e.key === 'Enter') {
-                table.draw();
-            }
         });
 
         $('#filter-tahun, #filter-bidang, #filter-kategori, #filter-status').on('change', function() {

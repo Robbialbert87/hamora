@@ -113,6 +113,18 @@
                         <div class="text-muted mt-1" style="font-size: 12px;">Format: PDF, Maks: 20MB</div>
                     </div>
                 </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Status <span class="text-danger">*</span></label>
+                        <select name="status" id="field-status" class="form-select @error('status') is-invalid @enderror">
+                            <option value="draft">Draft</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="kadaluarsa">Kadaluarsa</option>
+                        </select>
+                        <div id="status-info" class="text-muted mt-1" style="font-size: 12px;"></div>
+                        @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                </div>
             </div>
 
             <div class="mt-4 d-flex gap-3">
@@ -122,4 +134,45 @@
         </form>
     </div>
 </section>
+@endsection
+
+@section('scripts')
+<script>
+    function updateStatus() {
+        var terbit = document.querySelector('input[name="tanggal_terbit"]').value;
+        var berlaku = document.querySelector('input[name="tanggal_berlaku"]').value;
+        var statusField = document.getElementById('field-status');
+        var info = document.getElementById('status-info');
+
+        if (!terbit || !berlaku) {
+            statusField.value = 'draft';
+            info.textContent = '';
+            return;
+        }
+
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var tglTerbit = new Date(terbit + 'T00:00:00');
+        var tglBerlaku = new Date(berlaku + 'T00:00:00');
+
+        if (today > tglBerlaku) {
+            statusField.value = 'kadaluarsa';
+            info.textContent = 'Status otomatis: Kadaluarsa (tanggal berlaku sudah lewat)';
+        } else if (today >= tglTerbit) {
+            statusField.value = 'aktif';
+            info.textContent = 'Status otomatis: Aktif (dokumen sedang berlaku)';
+        } else {
+            statusField.value = 'draft';
+            info.textContent = 'Status otomatis: Draft (tanggal terbit belum tiba)';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var terbit = document.querySelector('input[name="tanggal_terbit"]');
+        var berlaku = document.querySelector('input[name="tanggal_berlaku"]');
+        if (terbit) terbit.addEventListener('change', updateStatus);
+        if (berlaku) berlaku.addEventListener('change', updateStatus);
+        updateStatus();
+    });
+</script>
 @endsection

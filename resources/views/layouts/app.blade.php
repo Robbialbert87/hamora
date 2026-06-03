@@ -115,7 +115,7 @@
 
             <ul class="nav-menu">
                 <li class="nav-section">
-                    <span class="nav-section-title">Main Menu</span>
+                    <span class="nav-section-title">Utama</span>
                     <ul>
                         <li class="nav-item">
                             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -123,10 +123,16 @@
                                 Dashboard
                             </a>
                         </li>
+                    </ul>
+                </li>
+
+                <li class="nav-section">
+                    <span class="nav-section-title">📁 Dokumen</span>
+                    <ul>
                         <li class="nav-item">
-                            <a href="{{ route('documents.index') }}" class="nav-link {{ request()->routeIs('documents.index') || request()->routeIs('documents.trashed') ? 'active' : '' }}">
+                            <a href="{{ route('documents.index') }}" class="nav-link {{ (request()->routeIs('documents.index') && !request()->has('status')) || request()->routeIs('documents.trashed') ? 'active' : '' }}">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                Dokumen
+                                Semua Dokumen
                             </a>
                         </li>
                         <li class="nav-item">
@@ -135,6 +141,35 @@
                                 Upload Dokumen
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#kontrolDokumenCollapse" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('documents.status') ? 'true' : 'false' }}">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                                <span>Status Dokumen</span>
+                                <svg class="chevron-icon ms-auto" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </a>
+                            <ul class="collapse {{ request()->routeIs('documents.status') ? 'show' : '' }}" id="kontrolDokumenCollapse">
+                                <li class="nav-item">
+                                    <a href="{{ route('documents.status', 'aktif') }}" class="nav-link sub-nav-link {{ request()->routeIs('documents.status') && request()->route('status') === 'aktif' ? 'active' : '' }}">
+                                        <svg class="sub-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        <span>Aktif</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('documents.status', 'kadaluarsa') }}" class="nav-link sub-nav-link {{ request()->routeIs('documents.status') && request()->route('status') === 'kadaluarsa' ? 'active' : '' }}">
+                                        <svg class="sub-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+                                        <span>Kadaluarsa</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                @canany(['kelola bidang', 'kelola kategori'])
+                @if(!auth()->user()->hasRole('User'))
+                <li class="nav-section">
+                    <span class="nav-section-title">⚙️ Pengaturan</span>
+                    <ul>
                         @can('kelola bidang')
                         <li class="nav-item">
                             <a href="{{ route('bidang.index') }}" class="nav-link {{ request()->routeIs('bidang.*') ? 'active' : '' }}">
@@ -153,6 +188,8 @@
                         @endcan
                     </ul>
                 </li>
+                @endif
+                @endcanany
 
                 @canany(['kelola user', 'kelola role', 'lihat log'])
                 <li class="nav-section">
@@ -212,14 +249,6 @@
             <nav class="navbar">
                 <h1 class="page-title">@yield('page-title', 'Dashboard')</h1>
                 <div class="navbar-right">
-                    @if(request()->routeIs('documents.index'))
-                    <div class="search-box">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" id="global-search" class="search-input" placeholder="Cari dokumen...">
-                    </div>
-                    @endif
-
-
                     <div class="nav-profile-dropdown">
                         <div class="nav-profile" id="profileDropdownToggle">
                             @if(auth()->user()->avatar)
@@ -299,6 +328,7 @@
                 });
             }
         });
+
     </script>
 </body>
 </html>
