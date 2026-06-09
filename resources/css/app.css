@@ -347,3 +347,73 @@ a { text-decoration: none; color: inherit; }
 .bottom-grid .glass-card:nth-child(2) { animation-delay: 0.9s; }
 .bottom-grid .glass-card:nth-child(3) { animation-delay: 1s; }
 .login-card { animation: fadeInUp 0.6s ease-out; }
+
+.accordion {
+    --bs-accordion-bg: transparent;
+    --bs-accordion-border-color: var(--glass-border);
+    --bs-accordion-border-radius: 16px;
+    --bs-accordion-btn-bg: transparent;
+    --bs-accordion-btn-color: var(--text-primary);
+    --bs-accordion-active-bg: transparent;
+    --bs-accordion-active-color: var(--emerald);
+    --bs-accordion-body-bg: transparent;
+    --bs-accordion-btn-focus-box-shadow: none;
+    --bs-accordion-btn-padding-y: 16px;
+    --bs-accordion-btn-padding-x: 20px;
+    --bs-accordion-body-padding-y: 16px;
+    --bs-accordion-body-padding-x: 20px;
+}
+.accordion-item {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius) !important;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+.accordion-item:hover {
+    background: var(--glass-hover);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 25px 50px -12px var(--glass-shadow);
+}
+.accordion-button {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    font-size: 15px;
+    box-shadow: none !important;
+}
+.accordion-button:not(.collapsed) {
+    background: transparent !important;
+    color: var(--emerald) !important;
+}
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    transition: transform var(--transition-normal);
+}
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+.accordion-body {
+    padding: var(--bs-accordion-body-padding-y) var(--bs-accordion-body-padding-x);
+    border-top: 1px solid var(--glass-border);
+}
+.accordion-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.15), rgba(5, 150, 105, 0.05));
+    color: var(--emerald);
+    flex-shrink: 0;
+}
+.accordion-button:not(.collapsed) .accordion-icon {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.25), rgba(5, 150, 105, 0.1));
+}
+.text-gold { color: var(--gold); }
+.text-emerald { color: var(--emerald); }

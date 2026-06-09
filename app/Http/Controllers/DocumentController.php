@@ -118,33 +118,56 @@ class DocumentController extends Controller
     {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
-        $documents = Document::where('status', 'aktif')->get();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi'])->get();
         return view('documents.create', compact('bidang', 'kategori', 'documents'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $jenisUpload = $request->input('jenis_upload', 'baru');
+
+        $rules = [
             'nomor_dokumen' => 'required|unique:documents',
             'nama_dokumen' => 'required|max:255',
             'tahun' => 'required|integer|min:2000|max:2099',
             'bidang_id' => 'required|exists:bidang,id',
             'kategori_id' => 'required|exists:kategori,id',
             'tanggal_terbit' => 'required|date',
-            'tanggal_berlaku' => 'nullable|date|after_or_equal:tanggal_terbit',
             'deskripsi' => 'nullable',
             'file_pdf' => 'required|mimes:pdf|max:20480',
-            'parent_document_id' => 'nullable|exists:documents,id',
             'status' => 'required|in:draft,aktif,kadaluarsa',
-        ]);
+        ];
 
+        if (in_array($jenisUpload, ['mou', 'revisi', 'update'])) {
+            $rules['tanggal_berlaku'] = $jenisUpload === 'mou'
+                ? 'required|date|after_or_equal:tanggal_terbit'
+                : 'nullable|date|after_or_equal:tanggal_terbit';
+        }
+
+        if (in_array($jenisUpload, ['revisi', 'update'])) {
+            $rules['parent_document_id'] = 'required|exists:documents,id';
+        }
+
+        $validated = $request->validate($rules);
         $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? null;
 
         if ($request->hasFile('file_pdf')) {
-            $this->documentService->createDocument($validated, $request->file('file_pdf'));
+            if (in_array($jenisUpload, ['revisi', 'update'])) {
+                $parentDocument = Document::findOrFail($validated['parent_document_id']);
+                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'));
+            } else {
+                $this->documentService->createDocument($validated, $request->file('file_pdf'));
+            }
         }
 
-        return redirect()->route('documents.index')->with('success', 'Dokumen berhasil diupload.');
+        $messages = [
+            'baru' => 'Dokumen baru berhasil diupload.',
+            'mou' => 'Dokumen MOU berhasil diupload.',
+            'revisi' => 'Revisi dokumen berhasil diupload.',
+            'update' => 'Update dokumen berhasil disimpan.',
+        ];
+
+        return redirect()->route('documents.index')->with('success', $messages[$jenisUpload] ?? 'Dokumen berhasil diupload.');
     }
 
     public function show(Document $document)
