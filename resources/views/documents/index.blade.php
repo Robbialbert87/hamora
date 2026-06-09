@@ -132,7 +132,12 @@
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'nomor_dokumen', name: 'nomor_dokumen' },
-                { data: 'nama_dokumen', name: 'nama_dokumen' },
+                { data: 'nama_dokumen', name: 'nama_dokumen', render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<span style="max-width: 250px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + $('<span>').text(data).html() + '">' + $('<span>').text(data).html() + '</span>';
+                    }
+                    return data;
+                } },
                 { data: 'bidang', name: 'bidang.nama' },
                 { data: 'kategori', name: 'kategori.nama' },
                 { data: 'tahun', name: 'tahun' },

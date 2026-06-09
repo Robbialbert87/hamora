@@ -120,7 +120,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $doc->nomor_dokumen }}</td>
-                        <td>{{ $doc->nama_dokumen }}</td>
+                        <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $doc->nama_dokumen }}">{{ $doc->nama_dokumen }}</td>
                         <td>{{ $doc->bidang->nama ?? '-' }}</td>
                         <td>{{ $doc->kategori->nama ?? '-' }}</td>
                         <td><span class="badge badge-{{ $doc->status }}">{{ ucfirst($doc->status) }}</span></td>
