@@ -78,6 +78,33 @@ class Document extends Model
             ->first();
     }
 
+    public function revisionHistory(): array
+    {
+        $history = collect();
+
+        $ancestors = collect();
+        $current = $this->parent;
+        while ($current) {
+            $ancestors->push($current);
+            $current = $current->parent;
+        }
+        $history = $history->merge($ancestors->reverse());
+
+        $history->push($this);
+
+        $descendants = collect();
+        $current = $this->latestRevision();
+        while ($current) {
+            $descendants->push($current);
+            $current = $current->latestRevision();
+        }
+        $history = $history->merge($descendants);
+
+        if ($history->count() <= 1) return [];
+
+        return $history->values()->all();
+    }
+
     public function scopeAktif($query)
     {
         return $query->where('status', 'aktif');

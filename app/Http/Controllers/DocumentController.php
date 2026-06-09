@@ -127,7 +127,6 @@ class DocumentController extends Controller
         $jenisUpload = $request->input('jenis_upload', 'baru');
 
         $rules = [
-            'nomor_dokumen' => 'required|unique:documents',
             'nama_dokumen' => 'required|max:255',
             'tahun' => 'required|integer|min:2000|max:2099',
             'bidang_id' => 'required|exists:bidang,id',
@@ -137,6 +136,12 @@ class DocumentController extends Controller
             'file_pdf' => 'required|mimes:pdf|max:20480',
             'status' => 'required|in:draft,aktif,kadaluarsa',
         ];
+
+        if (in_array($jenisUpload, ['baru', 'mou'])) {
+            $rules['nomor_dokumen'] = 'required|unique:documents';
+        } else {
+            $rules['nomor_dokumen'] = 'nullable|unique:documents';
+        }
 
         if (in_array($jenisUpload, ['mou', 'revisi', 'update'])) {
             $rules['tanggal_berlaku'] = $jenisUpload === 'mou'
@@ -174,7 +179,9 @@ class DocumentController extends Controller
     {
         $document->load(['bidang', 'kategori', 'uploader', 'verifier', 'versions.creator', 'parent']);
         $latestRevision = $document->latestRevision();
-        return view('documents.show', compact('document', 'latestRevision'));
+        $revisionHistory = $document->revisionHistory();
+        $latestDocId = !empty($revisionHistory) ? last($revisionHistory)->id : $document->id;
+        return view('documents.show', compact('document', 'latestRevision', 'revisionHistory', 'latestDocId'));
     }
 
     public function edit(Document $document)
@@ -253,6 +260,9 @@ class DocumentController extends Controller
 
     public function download(Document $document)
     {
+        if ($document->status === 'direvisi' && $document->latestRevision()) {
+            $document = $document->latestRevision();
+        }
         if (!Storage::disk('public')->exists($document->file_pdf)) {
             return back()->with('error', 'File PDF tidak ditemukan.');
         }
@@ -261,6 +271,9 @@ class DocumentController extends Controller
 
     public function preview(Document $document)
     {
+        if ($document->status === 'direvisi' && $document->latestRevision()) {
+            $document = $document->latestRevision();
+        }
         if (!Storage::disk('public')->exists($document->file_pdf)) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
         }

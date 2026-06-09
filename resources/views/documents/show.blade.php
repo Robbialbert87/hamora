@@ -15,17 +15,44 @@
                 </div>
             </div>
 
-            @if($document->status === 'direvisi' && $document->latestRevision())
-            <div class="alert d-flex align-items-center gap-2" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 16px; color: var(--info); margin-bottom: 20px;">
-                <i class="fas fa-info-circle"></i>
-                <div class="flex-grow-1" style="font-size: 14px;">
-                    Dokumen ini telah direvisi. Silakan gunakan versi terbaru.
+            <div class="mb-4">
+                <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Riwayat Revisi</div>
+                @forelse($revisionHistory as $doc)
+                <div style="display: flex; gap: 12px; position: relative; padding-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0;">
+                        @if($loop->first && $loop->count > 1)
+                        <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
+                        @endif
+                        @if(!$loop->first && !$loop->last)
+                        <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
+                        @endif
+                        <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; {{ $doc->id === $latestDocId ? 'background: var(--emerald); color: #fff;' : ($doc->status === 'direvisi' ? 'background: rgba(59,130,246,0.15); color: var(--info);' : 'background: var(--glass-border); color: var(--text-muted);') }}">
+                            <i class="fas {{ $doc->id === $latestDocId ? 'fa-chevron-right' : ($doc->status === 'direvisi' ? 'fa-sync-alt' : 'fa-file') }}" style="font-size: 10px;"></i>
+                        </div>
+                        @if(!$loop->last)
+                        <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
+                        @endif
+                    </div>
+                    <div style="flex: 1; padding-top: 2px;">
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            @if($doc->id === $latestDocId)
+                            <span style="font-size: 13px; font-weight: 600; color: var(--emerald);">{{ $doc->nomor_dokumen }}</span>
+                            <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Saat ini</span>
+                            @else
+                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; font-weight: 500; color: var(--text-primary); text-decoration: none;">{{ $doc->nomor_dokumen }}</a>
+                            @endif
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">{{ $doc->nama_dokumen }}</div>
+                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                            <span class="badge badge-{{ $doc->status }}" style="font-size: 10px; padding: 2px 8px;">{{ ucfirst($doc->status) }}</span>
+                            <span style="font-size: 11px; color: var(--text-muted);">v{{ $doc->versi ?? '1' }}</span>
+                        </div>
+                    </div>
                 </div>
-                <a href="{{ route('documents.show', $document->latestRevision()->id) }}" class="btn-emerald btn-sm">
-                    <i class="fas fa-external-link-alt"></i> Lihat Versi Terbaru
-                </a>
+                @empty
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 0;">Tidak ada riwayat revisi.</div>
+                @endforelse
             </div>
-            @endif
 
             <div class="detail-label">Nomor Dokumen</div>
             <div class="detail-value">{{ $document->nomor_dokumen }}</div>
