@@ -16,7 +16,7 @@
             </div>
 
             <div class="mb-4">
-                <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Riwayat Revisi</div>
+                <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Riwayat Dokumen</div>
                 @forelse($revisionHistory as $doc)
                 <div style="display: flex; gap: 12px; position: relative; padding-bottom: 16px;">
                     <div style="display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0;">
@@ -35,11 +35,9 @@
                     </div>
                     <div style="flex: 1; padding-top: 2px;">
                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; {{ $doc->id === $latestDocId ? 'font-weight: 600; color: var(--emerald);' : 'font-weight: 500; color: var(--text-primary);' }} text-decoration: none;">{{ $doc->nomor_dokumen }}</a>
                             @if($doc->id === $latestDocId)
-                            <span style="font-size: 13px; font-weight: 600; color: var(--emerald);">{{ $doc->nomor_dokumen }}</span>
                             <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Saat ini</span>
-                            @else
-                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; font-weight: 500; color: var(--text-primary); text-decoration: none;">{{ $doc->nomor_dokumen }}</a>
                             @endif
                         </div>
                         <div style="font-size: 12px; color: var(--text-secondary);">{{ $doc->nama_dokumen }}</div>

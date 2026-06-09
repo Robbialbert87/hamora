@@ -260,9 +260,6 @@ class DocumentController extends Controller
 
     public function download(Document $document)
     {
-        if ($document->status === 'direvisi' && $document->latestRevision()) {
-            $document = $document->latestRevision();
-        }
         if (!Storage::disk('public')->exists($document->file_pdf)) {
             return back()->with('error', 'File PDF tidak ditemukan.');
         }
@@ -271,9 +268,6 @@ class DocumentController extends Controller
 
     public function preview(Document $document)
     {
-        if ($document->status === 'direvisi' && $document->latestRevision()) {
-            $document = $document->latestRevision();
-        }
         if (!Storage::disk('public')->exists($document->file_pdf)) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
         }
