@@ -5,20 +5,38 @@
 
 @section('content')
     <style>
+        .accordion-content {
+            display: none;
+        }
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+        .accordion-item.active .accordion-button {
+            color: var(--emerald) !important;
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+        .accordion-item.active .accordion-button::after {
+            transform: rotate(180deg);
+        }
+        .accordion-item.active .accordion-icon {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.25), rgba(5, 150, 105, 0.1));
+        }
+
         @media (max-width: 768px) {
-            .accordion-collapse.collapsing {
-                transition: none !important;
+            .accordion-content .row.g-4 > [class*="col-"] {
+                width: 100%;
             }
-            .accordion-button::after {
-                transition: none !important;
+            .accordion-content .d-flex.gap-3 {
+                flex-direction: column;
             }
-            .accordion-body,
-            .accordion-button,
-            .accordion-item {
-                transition: none !important;
+            .accordion-content .d-flex.gap-3 .btn-emerald,
+            .accordion-content .d-flex.gap-3 .btn-outline-glass {
+                width: 100%;
+                justify-content: center;
             }
-            .accordion-icon {
-                transition: none !important;
+            .accordion-content .row.g-2 > [class*="col-"] {
+                width: 100%;
             }
         }
     </style>
@@ -39,8 +57,7 @@
                 <div class="accordion" id="uploadAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseBaru" aria-expanded="false">
+                            <button class="accordion-button collapsed" type="button" onclick="toggleAccordion(this)">
                                 <div class="d-flex align-items-center gap-3 w-100">
                                     <div class="accordion-icon">
                                         <i class="fas fa-file-upload"></i>
@@ -52,7 +69,7 @@
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseBaru" class="accordion-collapse collapse" data-bs-parent="#uploadAccordion">
+                        <div id="collapseBaru" class="accordion-content">
                             <div class="accordion-body">
                                 <div class="row g-4">
                                     <div class="col-md-6">
@@ -191,8 +208,7 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseMOU">
+                            <button class="accordion-button collapsed" type="button" onclick="toggleAccordion(this)">
                                 <div class="d-flex align-items-center gap-3 w-100">
                                     <div class="accordion-icon">
                                         <i class="fas fa-handshake"></i>
@@ -204,7 +220,7 @@
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseMOU" class="accordion-collapse collapse" data-bs-parent="#uploadAccordion">
+                        <div id="collapseMOU" class="accordion-content">
                             <div class="accordion-body">
                                 <div class="row g-4">
                                     <div class="col-md-6">
@@ -356,8 +372,7 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseUpdate">
+                            <button class="accordion-button collapsed" type="button" onclick="toggleAccordion(this)">
                                 <div class="d-flex align-items-center gap-3 w-100">
                                     <div class="accordion-icon">
                                         <i class="fas fa-sync-alt"></i>
@@ -370,7 +385,7 @@
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseUpdate" class="accordion-collapse collapse" data-bs-parent="#uploadAccordion">
+                        <div id="collapseUpdate" class="accordion-content">
                             <div class="accordion-body">
                                 <div class="row g-4">
                                     <div class="col-12">
@@ -681,7 +696,7 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
         }
 
-        .accordion-collapse {
+        .accordion-content {
             overflow: hidden;
         }
 
@@ -795,18 +810,24 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var accordion = document.getElementById('uploadAccordion');
-            if (accordion) {
-                accordion.addEventListener('show.bs.collapse', function(e) {
-                    var id = e.target.id;
-                    var jenis = document.getElementById('jenisUpload');
-                    if (id === 'collapseBaru') jenis.value = 'baru';
-                    else if (id === 'collapseMOU') jenis.value = 'mou';
-                    else if (id === 'collapseUpdate') jenis.value = 'update';
-                    if (id === 'collapseUpdate') attachFilters();
-                });
+        function toggleAccordion(btn) {
+            var item = btn.closest('.accordion-item');
+            if (!item) return;
+            var isOpen = item.classList.contains('active');
+            document.querySelectorAll('#uploadAccordion .accordion-item').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            if (!isOpen) {
+                item.classList.add('active');
+                var id = item.querySelector('.accordion-content')?.id || '';
+                var jenis = document.getElementById('jenisUpload');
+                if (id === 'collapseBaru') jenis.value = 'baru';
+                else if (id === 'collapseMOU') jenis.value = 'mou';
+                else if (id === 'collapseUpdate') {
+                    jenis.value = 'update';
+                    attachFilters();
+                }
             }
-        });
+        }
     </script>
 @endsection
