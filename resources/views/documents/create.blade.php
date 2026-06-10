@@ -20,7 +20,7 @@
 
             <div class="accordion" id="uploadAccordion">
                 <div class="accordion-item">
-                    <h2 class="accordion-header">
+                    <h2 class="accordion-header rounded-circle">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBaru" aria-expanded="false">
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="accordion-icon">
@@ -128,7 +128,7 @@
                 </div>
 
                 <div class="accordion-item">
-                    <h2 class="accordion-header">
+                    <h2 class="accordion-header rounded-circle">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMOU">
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="accordion-icon">
@@ -243,7 +243,7 @@
                 </div>
 
                 <div class="accordion-item">
-                    <h2 class="accordion-header">
+                    <h2 class="accordion-header rounded-circle">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUpdate">
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="accordion-icon">
