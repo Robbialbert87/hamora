@@ -4,15 +4,6 @@
 @section('page-title', 'Upload Dokumen')
 
 @section('content')
-    <style>
-        .content-grid *,
-        .content-grid *::before,
-        .content-grid *::after {
-            animation: none !important;
-            animation-delay: 0s !important;
-            transition: none !important;
-        }
-    </style>
     <section class="content-grid" style="grid-template-columns: 1fr;">
         <div class="glass-card" style="grid-column: span 1;">
             <div class="card-header">
