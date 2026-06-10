@@ -4,6 +4,13 @@
 @section('page-title', 'Upload Dokumen')
 
 @section('content')
+    <style>
+        @media (max-width: 768px) {
+            .accordion-collapse.collapsing {
+                transition-duration: 0.15s !important;
+            }
+        }
+    </style>
     <section class="content-grid" style="grid-template-columns: 1fr;">
         <div class="glass-card" style="grid-column: span 1;">
             <div class="card-header">
