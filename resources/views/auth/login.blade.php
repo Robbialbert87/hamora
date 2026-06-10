@@ -6,7 +6,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <img src="{{ asset('images/logo.png') }}" alt="HAMORA"
+                <img src="{{ asset('images/logo.webp') }}" alt="HAMORA"
                     style="width: 220px; height: auto; border-radius: 24px; object-fit: contain; margin: 0 auto 28px; display: block; filter: drop-shadow(0 12px 40px rgba(5, 150, 105, 0.3));">
             </div>
 
