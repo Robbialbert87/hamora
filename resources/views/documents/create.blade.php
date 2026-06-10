@@ -7,7 +7,18 @@
     <style>
         @media (max-width: 768px) {
             .accordion-collapse.collapsing {
-                transition-duration: 0.15s !important;
+                transition: none !important;
+            }
+            .accordion-button::after {
+                transition: none !important;
+            }
+            .accordion-body,
+            .accordion-button,
+            .accordion-item {
+                transition: none !important;
+            }
+            .accordion-icon {
+                transition: none !important;
             }
         }
     </style>
