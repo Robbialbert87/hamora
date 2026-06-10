@@ -617,7 +617,7 @@
             margin-bottom: 16px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal), margin 0.2s ease;
+            transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
         }
 
         .accordion-header {
@@ -644,7 +644,7 @@
             font-size: 15px;
             box-shadow: none !important;
             border-radius: var(--border-radius) !important;
-            transition: border-radius 0.3s ease, color var(--transition-normal);
+            transition: color var(--transition-normal);
         }
 
         .accordion-button:not(.collapsed) {
@@ -661,6 +661,10 @@
 
         .accordion-button:not(.collapsed)::after {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        }
+
+        .accordion-collapse {
+            overflow: hidden;
         }
 
         .accordion-body {
