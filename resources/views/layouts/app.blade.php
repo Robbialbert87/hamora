@@ -58,24 +58,32 @@
 
         .form-control,
         .form-select {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--glass-border);
             color: var(--text-primary);
             border-radius: 12px;
             padding: 12px 18px;
             font-family: inherit;
             font-size: 15px;
-            transition: all var(--transition-fast);
+            transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+            color-scheme: light;
         }
 
         .form-control:focus,
-        .form-select:focus {
-            outline: none;
+        .form-select:focus,
+        .form-control:focus-visible,
+        .form-select:focus-visible {
+            outline: none !important;
             border-color: var(--emerald-light);
             box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
-            background: var(--glass-bg);
+            background-color: rgba(255, 255, 255, 0.98);
             color: var(--text-primary);
+        }
+
+        .form-control:active,
+        .form-select:active {
+            transition: none !important;
         }
 
         .form-control::placeholder {
@@ -253,14 +261,14 @@
         }
 
         div.dataTables_wrapper div.dataTables_length select {
-            background: var(--glass-bg);
+            background-color: var(--glass-bg);
             border: 1px solid var(--glass-border);
             color: var(--text-primary);
             border-radius: 8px;
         }
 
         div.dataTables_wrapper div.dataTables_filter input {
-            background: var(--glass-bg);
+            background-color: var(--glass-bg);
             border: 1px solid var(--glass-border);
             color: var(--text-primary);
             border-radius: 8px;
@@ -306,8 +314,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             margin-bottom: 16px;
@@ -325,8 +332,7 @@
         }
 
         .pdf-container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--glass-border);
             border-radius: var(--border-radius);
             padding: 20px;
@@ -341,25 +347,9 @@
             height: auto !important;
         }
 
-        .form-control,
-        .form-select {
-            background: rgba(255, 255, 255, 0.8);
-            color: #1a1a1a;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            background: white;
-        }
-
-        .form-select option {
-            background: white;
-            color: #1a1a1a;
-        }
-
         div.dataTables_wrapper div.dataTables_length select,
         div.dataTables_wrapper div.dataTables_filter input {
-            background: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.8);
             color: #1a1a1a;
             border-color: rgba(0, 0, 0, 0.1);
         }
@@ -429,8 +419,7 @@
             top: calc(100% + 8px);
             right: 0;
             min-width: 200px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 8px;

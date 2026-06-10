@@ -49,10 +49,17 @@
                 </div>
             </div>
 
-            <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data" id="formUpload">
+            <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data" id="formUpload" novalidate>
                 @csrf
                 <input type="hidden" name="jenis_upload" id="jenisUpload" value="baru">
                 <input type="hidden" name="parent_document_id" id="parentDocumentId" value="">
+
+                @if ($errors->any())
+                    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert" style="border-radius: 12px;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>{{ $errors->first() }}</span>
+                    </div>
+                @endif
 
                 <div class="accordion" id="uploadAccordion">
                     <div class="accordion-item">
@@ -654,10 +661,8 @@
         }
 
         .accordion-header {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.5);
             border-radius: var(--border-radius) !important;
-
         }
 
         .accordion-item:hover {
@@ -733,6 +738,33 @@
     </style>
     <script>
         var isResetting = false;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var oldJenis = '{{ old("jenis_upload") }}';
+            if (oldJenis) {
+                var idMap = { baru: 'collapseBaru', mou: 'collapseMOU', update: 'collapseUpdate' };
+                var targetId = idMap[oldJenis];
+                if (targetId) {
+                    var targetItem = document.querySelector('[id="' + targetId + '"]');
+                    if (targetItem) {
+                        targetItem.closest('.accordion-item').classList.add('active');
+                    }
+                }
+            }
+        });
+
+        document.getElementById('formUpload').addEventListener('submit', function () {
+            var activeItem = document.querySelector('#uploadAccordion .accordion-item.active');
+            if (activeItem) {
+                document.querySelectorAll('#uploadAccordion .accordion-item').forEach(function (item) {
+                    if (item !== activeItem) {
+                        item.querySelectorAll('input, select, textarea, button').forEach(function (field) {
+                            field.disabled = true;
+                        });
+                    }
+                });
+            }
+        });
 
         function selectDoc(id, text) {
             document.getElementById('parentDocumentId').value = id;
