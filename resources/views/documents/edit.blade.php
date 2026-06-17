@@ -76,6 +76,7 @@
                             <option value="aktif" {{ old('status', $document->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
                             <option value="direvisi" {{ old('status', $document->status) == 'direvisi' ? 'selected' : '' }}>Direvisi</option>
                             <option value="kadaluarsa" {{ old('status', $document->status) == 'kadaluarsa' ? 'selected' : '' }}>Kadaluarsa</option>
+                            <option value="dicabut" {{ old('status', $document->status) == 'dicabut' ? 'selected' : '' }}>Dicabut</option>
                         </select>
                         @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>

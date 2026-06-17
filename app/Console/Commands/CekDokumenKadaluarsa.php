@@ -17,7 +17,7 @@ class CekDokumenKadaluarsa extends Command
         $today = now()->startOfDay();
 
         $baru = Document::where('tanggal_berlaku', '<', $today)
-            ->where('status', '!=', 'kadaluarsa')
+            ->whereNotIn('status', ['kadaluarsa', 'dicabut'])
             ->get();
 
         foreach ($baru as $doc) {

@@ -4,6 +4,11 @@
 @section('page-title', $document->nama_dokumen)
 
 @section('content')
+<style>
+    .page-title { max-width: 350px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge-digantikan { background: rgba(108, 117, 125, 0.15); color: #6c757d; }
+    .badge-digantikan::before { content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 6px; background: #6c757d; box-shadow: 0 0 8px #6c757d; }
+</style>
 <div class="row g-4">
     {{-- Left Column: Metadata --}}
     <div class="col-lg-5">
@@ -17,7 +22,10 @@
 
             <div class="mb-4">
                 <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Riwayat Dokumen</div>
-                @forelse($revisionHistory as $doc)
+                @forelse($revisionHistory as $i => $doc)
+                @php
+                    $isLatest = $doc->id === $latestDocId;
+                @endphp
                 <div style="display: flex; gap: 12px; position: relative; padding-bottom: 16px;">
                     <div style="display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0;">
                         @if($loop->first && $loop->count > 1)
@@ -26,8 +34,8 @@
                         @if(!$loop->first && !$loop->last)
                         <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
                         @endif
-                        <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; {{ $doc->id === $latestDocId ? 'background: var(--emerald); color: #fff;' : ($doc->status === 'direvisi' ? 'background: rgba(59,130,246,0.15); color: var(--info);' : 'background: var(--glass-border); color: var(--text-muted);') }}">
-                            <i class="fas {{ $doc->id === $latestDocId ? 'fa-chevron-right' : ($doc->status === 'direvisi' ? 'fa-sync-alt' : 'fa-file') }}" style="font-size: 10px;"></i>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; {{ $doc->status === 'dicabut' ? 'background: rgba(108,117,125,0.25); color: #6c757d;' : ($isLatest ? 'background: var(--emerald); color: #fff;' : 'background: rgba(108,117,125,0.15); color: #6c757d;') }}">
+                            <i class="fas {{ $doc->status === 'dicabut' ? 'fa-archive' : ($isLatest ? 'fa-chevron-right' : 'fa-file') }}" style="font-size: 10px;"></i>
                         </div>
                         @if(!$loop->last)
                         <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
@@ -35,14 +43,27 @@
                     </div>
                     <div style="flex: 1; padding-top: 2px;">
                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; {{ $doc->id === $latestDocId ? 'font-weight: 600; color: var(--emerald);' : 'font-weight: 500; color: var(--text-primary);' }} text-decoration: none;">{{ $doc->nomor_dokumen }}</a>
-                            @if($doc->id === $latestDocId)
+                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; {{ $isLatest ? 'font-weight: 600; color: var(--emerald);' : 'font-weight: 500; color: var(--text-primary);' }} text-decoration: none; overflow-wrap: break-word; word-break: break-word;">{{ $doc->nomor_dokumen }}</a>
+                            @if($doc->status === 'dicabut')
+                            <span style="font-size: 10px; background: rgba(108,117,125,0.2); color: #6c757d; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Dicabut</span>
+                            @elseif($isLatest)
                             <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Saat ini</span>
+                            @else
+                            <span style="font-size: 10px; background: rgba(108,117,125,0.12); color: #6c757d; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Lama</span>
                             @endif
                         </div>
-                        <div style="font-size: 12px; color: var(--text-secondary);">{{ $doc->nama_dokumen }}</div>
-                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
-                            <span class="badge badge-{{ $doc->status }}" style="font-size: 10px; padding: 2px 8px;">{{ ucfirst($doc->status) }}</span>
+                        <div style="font-size: 12px; color: var(--text-secondary); overflow-wrap: break-word; word-break: break-word;">{{ $doc->nama_dokumen }}</div>
+                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap;">
+                            @if($doc->status === 'dicabut')
+                                <span class="badge badge-dicabut" style="font-size: 10px; padding: 2px 8px;">Dicabut</span>
+                            @elseif($isLatest)
+                                <span class="badge badge-aktif" style="font-size: 10px; padding: 2px 8px;">Aktif</span>
+                            @else
+                                <span class="badge badge-digantikan" style="font-size: 10px; padding: 2px 8px;">Digantikan</span>
+                                @if(isset($revisionHistory[$i + 1]))
+                                <span style="font-size: 11px; color: var(--text-muted);">oleh V{{ $revisionHistory[$i + 1]->versi }}</span>
+                                @endif
+                            @endif
                             <span style="font-size: 11px; color: var(--text-muted);">v{{ $doc->versi ?? '1' }}</span>
                         </div>
                     </div>
@@ -56,7 +77,7 @@
             <div class="detail-value">{{ $document->nomor_dokumen }}</div>
 
             <div class="detail-label">Nama Dokumen</div>
-            <div class="detail-value">{{ $document->nama_dokumen }}</div>
+            <div class="detail-value" style="overflow-wrap: break-word; word-break: break-word;">{{ $document->nama_dokumen }}</div>
 
             <div class="row mb-3">
                 <div class="col-6">
@@ -82,7 +103,22 @@
 
             <div class="mb-3">
                 <div class="detail-label">Status</div>
-                <div><span class="badge badge-{{ $document->status }}" style="font-size: 14px; padding: 8px 16px;">{{ ucfirst($document->status) }}</span></div>
+                @php
+                    $isDocLatest = $document->id === $latestDocId;
+                    $docNext = $document->latestRevision();
+                @endphp
+                @if($document->status === 'dicabut')
+                    <div><span class="badge badge-dicabut" style="font-size: 14px; padding: 8px 16px;">Dicabut</span></div>
+                @elseif($isDocLatest)
+                    <div><span class="badge badge-aktif" style="font-size: 14px; padding: 8px 16px;">Aktif</span></div>
+                @elseif($docNext)
+                    <div>
+                        <span class="badge badge-digantikan" style="font-size: 14px; padding: 8px 16px;">Digantikan</span>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">oleh V{{ $docNext->versi }} — <a href="{{ route('documents.show', $docNext->id) }}" style="color: var(--emerald); text-decoration: none;">{{ $docNext->nomor_dokumen }}</a></div>
+                    </div>
+                @else
+                    <div><span class="badge badge-{{ $document->status }}" style="font-size: 14px; padding: 8px 16px;">{{ ucfirst($document->status) }}</span></div>
+                @endif
             </div>
 
             <div class="row mb-3">
@@ -96,15 +132,21 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
-                <div class="col-6">
-                    <div class="detail-label">Diupload oleh</div>
-                    <div class="detail-value" style="font-size: 14px;">{{ $document->uploader->name ?? '-' }}</div>
+            @if($document->status === 'dicabut' && $document->tanggal_pencabutan)
+            <div class="mb-3 p-3 rounded-3" style="background: rgba(108,117,125,0.1); border: 1px solid rgba(108,117,125,0.2);">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <i class="fas fa-archive" style="color: var(--text-muted);"></i>
+                    <span class="detail-label" style="margin-bottom: 0;">Dicabut pada</span>
                 </div>
-                <div class="col-6">
-                    <div class="detail-label">Diverifikasi oleh</div>
-                    <div class="detail-value" style="font-size: 14px;">{{ $document->verifier->name ?? '-' }}</div>
+                <div class="detail-value" style="font-size: 15px; margin-bottom: 0;">
+                    {{ $document->tanggal_pencabutan->format('d/m/Y') }}
                 </div>
+            </div>
+            @endif
+
+            <div class="mb-3">
+                <div class="detail-label">Diupload oleh</div>
+                <div class="detail-value" style="font-size: 14px;">{{ $document->uploader->name ?? '-' }}</div>
             </div>
 
             <div class="mb-4">
@@ -120,14 +162,6 @@
                 <a href="{{ route('documents.edit', $document->id) }}" class="btn-outline-glass btn-sm">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-                @endcan
-                @can('verifikasi dokumen')
-                <form action="{{ route('documents.verify', $document->id) }}" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn-outline-glass btn-sm">
-                        <i class="fas fa-check-circle"></i> Verify
-                    </button>
-                </form>
                 @endcan
                 <a href="{{ route('documents.index') }}" class="btn-outline-glass btn-sm">
                     <i class="fas fa-arrow-left"></i> Kembali

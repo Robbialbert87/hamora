@@ -35,6 +35,13 @@
             min-height: 100vh;
         }
 
+        .page-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 400px;
+        }
+
         .sidebar {
             overflow-y: auto;
         }
@@ -223,10 +230,22 @@
             color: var(--danger);
         }
 
+        .badge-dicabut {
+            background: rgba(108, 117, 125, 0.15);
+            color: #6c757d;
+        }
+
+        .badge-digantikan {
+            background: rgba(108, 117, 125, 0.15);
+            color: #6c757d;
+        }
+
         .badge-aktif::before,
         .badge-draft::before,
         .badge-direvisi::before,
-        .badge-kadaluarsa::before {
+        .badge-kadaluarsa::before,
+        .badge-dicabut::before,
+        .badge-digantikan::before {
             content: '';
             width: 6px;
             height: 6px;
@@ -253,6 +272,16 @@
         .badge-kadaluarsa::before {
             background: var(--danger);
             box-shadow: 0 0 8px var(--danger);
+        }
+
+        .badge-dicabut::before {
+            background: #6c757d;
+            box-shadow: 0 0 8px #6c757d;
+        }
+
+        .badge-digantikan::before {
+            background: #6c757d;
+            box-shadow: 0 0 8px #6c757d;
         }
 
         .dataTable td,
@@ -307,6 +336,8 @@
             color: var(--text-primary);
             font-weight: 500;
             margin-bottom: 16px;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         .pdf-toolbar {
@@ -532,7 +563,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('documents.create') }}"
-                                class="nav-link {{ request()->routeIs('documents.create') ? 'active' : '' }}">
+                                class="nav-link {{ request()->routeIs('documents.create*') ? 'active' : '' }}">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -578,6 +609,18 @@
                                             <path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
                                         </svg>
                                         <span>Kadaluarsa</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('documents.status', 'dicabut') }}"
+                                        class="nav-link sub-nav-link {{ request()->routeIs('documents.status') && request()->route('status') === 'dicabut' ? 'active' : '' }}">
+                                        <svg class="sub-nav-icon" width="16" height="16" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                        </svg>
+                                        <span>Dicabut</span>
                                     </a>
                                 </li>
                             </ul>

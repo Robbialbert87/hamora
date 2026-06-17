@@ -70,7 +70,6 @@ class DocumentController extends Controller
             $documents->where(function ($q) use ($search) {
                 $q->where('nomor_dokumen', 'like', "%{$search}%")
                   ->orWhere('nama_dokumen', 'like', "%{$search}%")
-                  ->orWhere('tahun', 'like', "%{$search}%")
                   ->orWhere('deskripsi', 'like', "%{$search}%")
                   ->orWhere('status', 'like', "%{$search}%");
             });
@@ -84,9 +83,12 @@ class DocumentController extends Controller
             ->addColumn('kategori', function ($doc) {
                 return $doc->kategori?->nama ?? '-';
             })
+            ->addColumn('tanggal_terbit_formatted', function ($doc) {
+                return $doc->tanggal_terbit ? $doc->tanggal_terbit->format('d/m/Y') : '-';
+            })
             ->addColumn('status_badge', function ($doc) {
-                $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa'];
-                $colors = ['draft' => 'warning', 'aktif' => 'success', 'direvisi' => 'info', 'kadaluarsa' => 'danger'];
+                $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa', 'dicabut' => 'Dicabut'];
+                $colors = ['draft' => 'warning', 'aktif' => 'success', 'direvisi' => 'info', 'kadaluarsa' => 'danger', 'dicabut' => 'secondary'];
                 $label = $labels[$doc->status] ?? e($doc->status);
                 $color = $colors[$doc->status] ?? 'secondary';
                 return "<span class=\"badge bg-{$color}\">{$label}</span>";
@@ -118,13 +120,47 @@ class DocumentController extends Controller
     {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
-        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi'])->get();
-        return view('documents.create', compact('bidang', 'kategori', 'documents'));
+        return view('documents.create', compact('bidang', 'kategori'));
+    }
+
+    public function createBaru()
+    {
+        $bidang = Bidang::all();
+        $kategori = Kategori::all();
+        return view('documents.create-baru', compact('bidang', 'kategori'));
+    }
+
+    public function createMou()
+    {
+        $bidang = Bidang::all();
+        $kategori = Kategori::all();
+        return view('documents.create-mou', compact('bidang', 'kategori'));
+    }
+
+    public function createUpdate()
+    {
+        $bidang = Bidang::all();
+        $kategori = Kategori::all();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
+        return view('documents.create-update', compact('bidang', 'kategori', 'documents'));
     }
 
     public function store(Request $request)
     {
         $jenisUpload = $request->input('jenis_upload', 'baru');
+
+        if ($jenisUpload === 'dicabut') {
+            $validated = $request->validate([
+                'parent_document_id' => 'required|exists:documents,id',
+                'tanggal_pencabutan' => 'required|date',
+                'keterangan_pencabutan' => 'nullable|string|max:500',
+            ]);
+
+            $parentDocument = Document::findOrFail($validated['parent_document_id']);
+            $this->documentService->archiveDocument($parentDocument, $validated['keterangan_pencabutan'] ?? '', $validated['tanggal_pencabutan']);
+
+            return redirect()->route('documents.index')->with('success', 'Dokumen berhasil diarsipkan.');
+        }
 
         $rules = [
             'nama_dokumen' => 'required|max:255',
@@ -134,7 +170,7 @@ class DocumentController extends Controller
             'tanggal_terbit' => 'required|date',
             'deskripsi' => 'nullable',
             'file_pdf' => 'required|mimes:pdf|max:20480',
-            'status' => 'required|in:draft,aktif,kadaluarsa',
+            'status' => 'required|in:draft,aktif,kadaluarsa,dicabut',
         ];
 
         if (in_array($jenisUpload, ['baru', 'mou'])) {
@@ -153,16 +189,29 @@ class DocumentController extends Controller
             $rules['parent_document_id'] = 'required|exists:documents,id';
         }
 
+        if (in_array($jenisUpload, ['update', 'revisi'])) {
+            $rules['bidang_id'] = 'nullable|exists:bidang,id';
+            $rules['kategori_id'] = 'nullable|exists:kategori,id';
+            $rules['status'] = 'nullable|in:draft,aktif,kadaluarsa,dicabut';
+        }
+
         $validated = $request->validate($rules);
         $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? null;
 
-        if ($request->hasFile('file_pdf')) {
-            if (in_array($jenisUpload, ['revisi', 'update'])) {
-                $parentDocument = Document::findOrFail($validated['parent_document_id']);
-                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'));
-            } else {
-                $this->documentService->createDocument($validated, $request->file('file_pdf'));
+        if (in_array($jenisUpload, ['revisi', 'update'])) {
+            $parentDocument = Document::findOrFail($validated['parent_document_id']);
+
+            if (in_array($jenisUpload, ['update', 'revisi'])) {
+                $validated['bidang_id'] = $validated['bidang_id'] ?? $parentDocument->bidang_id;
+                $validated['kategori_id'] = $validated['kategori_id'] ?? $parentDocument->kategori_id;
+                $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? $parentDocument->tanggal_berlaku;
             }
+
+            if ($request->hasFile('file_pdf')) {
+                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'));
+            }
+        } elseif ($request->hasFile('file_pdf')) {
+            $this->documentService->createDocument($validated, $request->file('file_pdf'));
         }
 
         $messages = [
@@ -203,7 +252,7 @@ class DocumentController extends Controller
             'tanggal_berlaku' => 'nullable|date|after_or_equal:tanggal_terbit',
             'deskripsi' => 'nullable',
             'file_pdf' => 'nullable|mimes:pdf|max:20480',
-            'status' => 'required|in:draft,aktif,direvisi,kadaluarsa',
+            'status' => 'required|in:draft,aktif,direvisi,kadaluarsa,dicabut',
         ]);
 
         if ($request->hasFile('file_pdf')) {
@@ -218,12 +267,6 @@ class DocumentController extends Controller
         ActivityLog::log('edit', "Edit dokumen: {$document->nama_dokumen}", ['document_id' => $document->id]);
 
         return redirect()->route('documents.index')->with('success', 'Dokumen berhasil diperbarui.');
-    }
-
-    public function verify(Document $document)
-    {
-        $this->documentService->verifyDocument($document);
-        return redirect()->route('documents.index')->with('success', 'Dokumen berhasil diverifikasi.');
     }
 
     public function destroy(Document $document)

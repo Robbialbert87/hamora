@@ -12,7 +12,7 @@ class Document extends Model
 
     protected $fillable = [
         'nomor_dokumen', 'nama_dokumen', 'tahun', 'bidang_id', 'kategori_id',
-        'tanggal_terbit', 'tanggal_berlaku', 'versi', 'status',
+        'tanggal_terbit', 'tanggal_berlaku', 'tanggal_pencabutan', 'versi', 'status',
         'deskripsi', 'file_pdf', 'parent_document_id', 'uploaded_by', 'verified_by'
     ];
 
@@ -21,6 +21,7 @@ class Document extends Model
         return [
             'tanggal_terbit' => 'date',
             'tanggal_berlaku' => 'date',
+            'tanggal_pencabutan' => 'date',
             'tahun' => 'integer',
             'versi' => 'integer',
         ];

@@ -44,7 +44,7 @@ class DocumentService
 
         $data['parent_document_id'] = $parentDocument->id;
         $data['uploaded_by'] = auth()->id();
-        $data['status'] = 'draft';
+        $data['status'] = $data['status'] ?? 'draft';
         $data['versi'] = $parentDocument->versi + 1;
 
         if (!isset($data['nomor_dokumen'])) {
@@ -74,15 +74,17 @@ class DocumentService
         ]);
     }
 
-    public function verifyDocument(Document $document): Document
+    public function archiveDocument(Document $document, string $keterangan = '', ?string $tanggalPencabutan = null): Document
     {
         $document->update([
-            'status' => 'aktif',
-            'verified_by' => auth()->id(),
+            'status' => 'dicabut',
+            'tanggal_pencabutan' => $tanggalPencabutan ?? now()->toDateString(),
         ]);
 
-        ActivityLog::log('verifikasi', "Verifikasi dokumen: {$document->nama_dokumen}", [
-            'document_id' => $document->id
+        ActivityLog::log('arsip', "Arsipkan dokumen: {$document->nama_dokumen}", [
+            'document_id' => $document->id,
+            'keterangan' => $keterangan,
+            'tanggal_pencabutan' => $tanggalPencabutan,
         ]);
 
         return $document;

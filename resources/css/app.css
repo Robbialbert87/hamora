@@ -90,8 +90,8 @@ a { text-decoration: none; color: inherit; }
 .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 30px; min-height: 100vh; -webkit-overflow-scrolling: touch; }
 
 .navbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 20px; }
-.page-title { font-size: 28px; font-weight: 600; }
-.navbar-right { display: flex; align-items: center; gap: 8px; }
+.page-title { font-size: 28px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; max-width: 50%; }
+.navbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .search-box { position: relative; }
 .search-input { width: 280px; padding: 12px 20px 12px 48px; background: rgba(255, 255, 255, 0.75); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text-primary); font-family: inherit; font-size: 14px; transition: all var(--transition-fast); }
 .search-input::placeholder { color: var(--text-muted); }

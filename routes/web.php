@@ -28,16 +28,15 @@ Route::middleware(['auth', 'verified', 'check.active'])->group(function () {
 
         Route::middleware('can:upload dokumen')->group(function () {
             Route::get('/create', [DocumentController::class, 'create'])->name('create');
+            Route::get('/create/baru', [DocumentController::class, 'createBaru'])->name('create.baru');
+            Route::get('/create/mou', [DocumentController::class, 'createMou'])->name('create.mou');
+            Route::get('/create/update', [DocumentController::class, 'createUpdate'])->name('create.update');
             Route::post('/', [DocumentController::class, 'store'])->name('store');
         });
 
         Route::middleware('can:edit dokumen')->group(function () {
             Route::get('/{document}/edit', [DocumentController::class, 'edit'])->name('edit');
             Route::put('/{document}', [DocumentController::class, 'update'])->name('update');
-        });
-
-        Route::middleware('can:verifikasi dokumen')->group(function () {
-            Route::put('/{document}/verify', [DocumentController::class, 'verify'])->name('verify');
         });
 
         Route::middleware('can:hapus dokumen')->group(function () {

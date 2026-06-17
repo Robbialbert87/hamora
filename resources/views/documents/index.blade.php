@@ -76,6 +76,7 @@
                     <option value="draft">Draft</option>
                     <option value="direvisi">Direvisi</option>
                     <option value="kadaluarsa">Kadaluarsa</option>
+                    <option value="dicabut">Dicabut</option>
                 </select>
             </div>
             <div class="filter-actions">
@@ -95,7 +96,7 @@
                         <th>Nama Dokumen</th>
                         <th>Bidang</th>
                         <th>Kategori</th>
-                        <th>Tahun</th>
+                        <th>Tanggal Terbit</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -140,7 +141,7 @@
                 } },
                 { data: 'bidang', name: 'bidang.nama' },
                 { data: 'kategori', name: 'kategori.nama' },
-                { data: 'tahun', name: 'tahun' },
+                { data: 'tanggal_terbit_formatted', name: 'tanggal_terbit' },
                 { data: 'status_badge', name: 'status' },
                 { data: 'action', name: 'aksi', orderable: false, searchable: false }
             ],
