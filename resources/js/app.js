@@ -91,7 +91,13 @@
 
             overlay.addEventListener('click', closeSidebar);
 
-            document.querySelectorAll('.nav-link').forEach(link => {
+            document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            });
+
+            document.querySelectorAll('.nav-link:not([data-bs-toggle="collapse"])').forEach(link => {
                 link.addEventListener('click', () => {
                     if (window.innerWidth < 992) {
                         closeSidebar();
