@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'sync_user' => [
+        'url' => env('SYNC_USER_API_URL'),
+    ],
+
 ];

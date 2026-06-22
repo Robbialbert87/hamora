@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'check.active' => \App\Http\Middleware\CheckUserActive::class,
+            'check.must.change.password' => \App\Http\Middleware\CheckMustChangePassword::class,
         ]);
 
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);

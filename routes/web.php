@@ -14,7 +14,7 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::middleware(['auth', 'verified', 'check.active'])->group(function () {
+Route::middleware(['auth', 'verified', 'check.active', 'check.must.change.password'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/notifikasi-kadaluarsa', [DashboardController::class, 'notifikasiKadaluarsa'])->name('dashboard.notifikasi-kadaluarsa')->middleware('can:kelola bidang');
 

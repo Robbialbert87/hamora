@@ -28,10 +28,10 @@
                 @csrf
 
                 <div class="form-group">
-                    <label class="form-label" for="email">Email</label>
-                    <input id="email" type="email" name="email" class="form-input" value="{{ old('email') }}"
-                        required autofocus autocomplete="username" placeholder="Masukkan email">
-                    @error('email')
+                    <label class="form-label" for="nip">NIP</label>
+                    <input id="nip" type="text" name="nip" class="form-input" value="{{ old('nip') }}"
+                        required autofocus autocomplete="off" placeholder="Masukkan NIP">
+                    @error('nip')
                         <div style="color: var(--danger); font-size: 13px; margin-top: 6px;">{{ $message }}</div>
                     @enderror
                 </div>
