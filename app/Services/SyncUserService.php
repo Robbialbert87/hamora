@@ -22,6 +22,7 @@ class SyncUserService
         do {
             try {
                 $response = Http::timeout(10)
+                    ->withoutVerifying()
                     ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
                     ->get($apiUrl, ['page' => $page]);
 
@@ -64,6 +65,7 @@ class SyncUserService
 
         try {
             $response = Http::timeout(15)
+                ->withoutVerifying()
                 ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
                 ->get($apiUrl, ['page' => 1]);
 
@@ -88,6 +90,7 @@ class SyncUserService
 
             for ($page = 2; $page <= $lastPage; $page++) {
                 $response = Http::timeout(15)
+                    ->withoutVerifying()
                     ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
                     ->get($apiUrl, ['page' => $page]);
 
