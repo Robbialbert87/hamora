@@ -39,4 +39,8 @@ return [
         'url' => env('SYNC_USER_API_URL'),
     ],
 
+    'sijaga' => [
+        'url' => env('SIJAGA_URL'),
+    ],
+
 ];
