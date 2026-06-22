@@ -37,6 +37,7 @@ return [
 
     'sync_user' => [
         'url' => env('SYNC_USER_API_URL'),
+        'api_key' => env('SIJAGA_API_KEY'),
     ],
 
 ];

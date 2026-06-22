@@ -21,7 +21,9 @@ class SyncUserService
 
         do {
             try {
-                $response = Http::timeout(10)->get($apiUrl, ['page' => $page]);
+                $response = Http::timeout(10)
+                    ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
+                    ->get($apiUrl, ['page' => $page]);
 
                 if ($response->failed()) {
                     break;
@@ -61,7 +63,9 @@ class SyncUserService
         }
 
         try {
-            $response = Http::timeout(15)->get($apiUrl, ['page' => 1]);
+            $response = Http::timeout(15)
+                ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
+                ->get($apiUrl, ['page' => 1]);
 
             if ($response->failed()) {
                 return ['synced' => 0, 'errors' => 0, 'message' => 'Gagal terhubung ke API'];
@@ -83,7 +87,9 @@ class SyncUserService
             }
 
             for ($page = 2; $page <= $lastPage; $page++) {
-                $response = Http::timeout(15)->get($apiUrl, ['page' => $page]);
+                $response = Http::timeout(15)
+                    ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
+                    ->get($apiUrl, ['page' => $page]);
 
                 if ($response->failed()) {
                     $errors += ($lastPage - $page + 1) * 20;
