@@ -23,7 +23,6 @@ class SyncUserService
             try {
                 $response = Http::timeout(10)
                     ->withoutVerifying()
-                    ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
                     ->get($apiUrl, ['page' => $page]);
 
                 if ($response->failed()) {
@@ -66,7 +65,6 @@ class SyncUserService
         try {
             $response = Http::timeout(15)
                 ->withoutVerifying()
-                ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
                 ->get($apiUrl, ['page' => 1]);
 
             if ($response->failed()) {
@@ -91,7 +89,6 @@ class SyncUserService
             for ($page = 2; $page <= $lastPage; $page++) {
                 $response = Http::timeout(15)
                     ->withoutVerifying()
-                    ->withHeaders(['X-API-Key' => config('services.sync_user.api_key')])
                     ->get($apiUrl, ['page' => $page]);
 
                 if ($response->failed()) {
@@ -146,6 +143,8 @@ class SyncUserService
             return $existingUser;
         }
 
+        $roleName = $this->determineRole($pegawai);
+
         $user = User::create([
             'name' => $nama,
             'email' => $nip . '@hamora.local',
@@ -157,8 +156,30 @@ class SyncUserService
             'must_change_password' => true,
         ]);
 
-        $user->assignRole('User');
+        $user->assignRole($roleName);
 
         return $user;
+    }
+
+    private function determineRole(array $pegawai): string
+    {
+        $superAdminNips = ['198706072020121003'];
+
+        if (in_array($pegawai['nip'] ?? '', $superAdminNips)) {
+            return 'Super Admin';
+        }
+
+        $roleInfo = $pegawai['role_info'] ?? null;
+        if ($roleInfo && isset($roleInfo['roles']) && is_array($roleInfo['roles'])) {
+            $sijagaRoles = $roleInfo['roles'];
+            if (in_array('super_admin', $sijagaRoles) || in_array('Super Admin', $sijagaRoles)) {
+                return 'Super Admin';
+            }
+            if (in_array('admin', $sijagaRoles) || in_array('Admin', $sijagaRoles)) {
+                return 'Admin';
+            }
+        }
+
+        return 'User';
     }
 }
