@@ -14,7 +14,7 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::middleware(['auth', 'verified', 'check.active', 'check.must.change.password'])->group(function () {
+Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/notifikasi-kadaluarsa', [DashboardController::class, 'notifikasiKadaluarsa'])->name('dashboard.notifikasi-kadaluarsa')->middleware('can:kelola bidang');
 
@@ -48,13 +48,13 @@ Route::middleware(['auth', 'verified', 'check.active', 'check.must.change.passwo
             Route::post('/{id}/restore', [DocumentController::class, 'restore'])->name('restore');
         });
 
-        Route::get('/{document}', [DocumentController::class, 'show'])->name('show');
+        Route::get('/{document}', [DocumentController::class, 'show'])->name('show')->middleware('can:lihat dokumen');
     });
 
-    Route::resource('bidang', BidangController::class);
-    Route::resource('kategori', KategoriController::class);
+    Route::resource('bidang', BidangController::class)->middleware('can:kelola bidang');
+    Route::resource('kategori', KategoriController::class)->middleware('can:kelola kategori');
 
-    Route::prefix('users')->name('users.')->group(function () {
+    Route::prefix('users')->name('users.')->middleware('can:kelola user')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create');
         Route::post('/', [UserController::class, 'store'])->name('store');
@@ -63,7 +63,7 @@ Route::middleware(['auth', 'verified', 'check.active', 'check.must.change.passwo
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('logs')->name('logs.')->group(function () {
+    Route::prefix('logs')->name('logs.')->middleware('can:lihat log')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
         Route::get('/data', [ActivityLogController::class, 'data'])->name('data');
     });

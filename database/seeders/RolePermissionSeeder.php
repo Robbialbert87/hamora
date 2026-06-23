@@ -19,20 +19,20 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        $superAdmin = Role::create(['name' => 'Super Admin']);
+        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdmin->givePermissionTo(Permission::all());
 
-        $admin = Role::create(['name' => 'Admin']);
+        $admin = Role::firstOrCreate(['name' => 'Admin']);
         $admin->givePermissionTo([
             'kelola user', 'verifikasi dokumen', 'edit metadata', 'lihat log',
             'upload dokumen', 'edit dokumen', 'lihat dokumen',
             'kelola kategori', 'kelola bidang',
         ]);
 
-        $user = Role::create(['name' => 'User']);
+        $user = Role::firstOrCreate(['name' => 'User']);
         $user->givePermissionTo([
             'upload dokumen', 'lihat dokumen',
         ]);

@@ -629,39 +629,37 @@
                 </li>
 
                 @canany(['kelola bidang', 'kelola kategori'])
-                    @if (!auth()->user()->hasRole('User'))
-                        <li class="nav-section">
-                            <span class="nav-section-title">⚙️ Pengaturan</span>
-                            <ul>
-                                @can('kelola bidang')
-                                    <li class="nav-item">
-                                        <a href="{{ route('bidang.index') }}"
-                                            class="nav-link {{ request()->routeIs('bidang.*') ? 'active' : '' }}">
-                                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2">
-                                                <path
-                                                    d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-                                            </svg>
-                                            Bidang
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('kelola kategori')
-                                    <li class="nav-item">
-                                        <a href="{{ route('kategori.index') }}"
-                                            class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}">
-                                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2">
-                                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                                            </svg>
-                                            Kategori
-                                        </a>
-                                    </li>
-                                @endcan
-                            </ul>
-                        </li>
-                    @endif
+                    <li class="nav-section">
+                        <span class="nav-section-title">⚙️ Pengaturan</span>
+                        <ul>
+                            @can('kelola bidang')
+                                <li class="nav-item">
+                                    <a href="{{ route('bidang.index') }}"
+                                        class="nav-link {{ request()->routeIs('bidang.*') ? 'active' : '' }}">
+                                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path
+                                                d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                                        </svg>
+                                        Bidang
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('kelola kategori')
+                                <li class="nav-item">
+                                    <a href="{{ route('kategori.index') }}"
+                                        class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}">
+                                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                        </svg>
+                                        Kategori
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
                 @endcanany
 
                 @canany(['kelola user', 'kelola role', 'lihat log'])
