@@ -197,7 +197,7 @@ class DocumentController extends Controller
         if (in_array($jenisUpload, ['baru', 'mou'])) {
             $rules['nomor_dokumen'] = 'required|unique:documents';
         } else {
-            $rules['nomor_dokumen'] = 'nullable|unique:documents';
+            $rules['nomor_dokumen'] = 'nullable';
         }
 
         if (in_array($jenisUpload, ['mou', 'revisi', 'update'])) {
@@ -221,6 +221,12 @@ class DocumentController extends Controller
 
         if (in_array($jenisUpload, ['revisi', 'update'])) {
             $parentDocument = Document::findOrFail($validated['parent_document_id']);
+
+            if ($validated['nomor_dokumen'] && $validated['nomor_dokumen'] === $parentDocument->nomor_dokumen && $validated['tanggal_terbit'] === $parentDocument->tanggal_terbit?->format('Y-m-d')) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'tanggal_terbit' => 'Tanggal terbit harus berbeda dari dokumen asli jika nomor dokumen sama.',
+                ]);
+            }
 
             if (in_array($jenisUpload, ['update', 'revisi'])) {
                 $validated['bidang_id'] = $validated['bidang_id'] ?? $parentDocument->bidang_id;
