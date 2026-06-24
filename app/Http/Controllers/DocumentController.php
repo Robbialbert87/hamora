@@ -195,7 +195,7 @@ class DocumentController extends Controller
         ];
 
         if (in_array($jenisUpload, ['baru', 'mou'])) {
-            $rules['nomor_dokumen'] = 'required|unique:documents';
+            $rules['nomor_dokumen'] = 'required';
         } else {
             $rules['nomor_dokumen'] = 'nullable';
         }
