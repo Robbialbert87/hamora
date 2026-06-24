@@ -36,7 +36,7 @@ class DocumentService
         return $document;
     }
 
-    public function createRevision(Document $parentDocument, array $data, ?UploadedFile $file = null): Document
+    public function createRevision(Document $parentDocument, array $data, ?UploadedFile $file = null, string $parentStatus = 'direvisi'): Document
     {
         if ($file) {
             $data['file_pdf'] = $this->uploadPdf($file, $data['tahun']);
@@ -53,7 +53,7 @@ class DocumentService
 
         $document = Document::create($data);
 
-        $parentDocument->update(['status' => 'direvisi']);
+        $parentDocument->update(['status' => $parentStatus]);
 
         ActivityLog::log('upload', "Revisi dokumen: {$document->nama_dokumen} (v{$document->versi})", [
             'document_id' => $document->id,

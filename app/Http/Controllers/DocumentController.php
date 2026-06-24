@@ -87,8 +87,8 @@ class DocumentController extends Controller
                 return $doc->tanggal_terbit ? $doc->tanggal_terbit->format('d/m/Y') : '-';
             })
             ->addColumn('status_badge', function ($doc) {
-                $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa', 'dicabut' => 'Dicabut'];
-                $colors = ['draft' => 'warning', 'aktif' => 'success', 'direvisi' => 'info', 'kadaluarsa' => 'danger', 'dicabut' => 'secondary'];
+                $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa', 'dicabut' => 'Dicabut', 'diubah' => 'Diubah'];
+                $colors = ['draft' => 'warning', 'aktif' => 'success', 'direvisi' => 'info', 'kadaluarsa' => 'danger', 'dicabut' => 'secondary', 'diubah' => 'primary'];
                 $label = $labels[$doc->status] ?? e($doc->status);
                 $color = $colors[$doc->status] ?? 'secondary';
                 return "<span class=\"badge bg-{$color}\">{$label}</span>";
@@ -146,7 +146,7 @@ class DocumentController extends Controller
     {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
-        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut', 'diubah'])->get();
         return view('documents.create-update-diubah', compact('bidang', 'kategori', 'documents'));
     }
 
@@ -154,7 +154,7 @@ class DocumentController extends Controller
     {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
-        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut', 'diubah'])->get();
         return view('documents.create-update-dicabut', compact('bidang', 'kategori', 'documents'));
     }
 
@@ -162,7 +162,7 @@ class DocumentController extends Controller
     {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
-        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut', 'diubah'])->get();
         return view('documents.create-update-dicabut-sebagian', compact('bidang', 'kategori', 'documents'));
     }
 
@@ -213,7 +213,7 @@ class DocumentController extends Controller
         if (in_array($jenisUpload, ['update', 'revisi'])) {
             $rules['bidang_id'] = 'nullable|exists:bidang,id';
             $rules['kategori_id'] = 'nullable|exists:kategori,id';
-            $rules['status'] = 'nullable|in:draft,aktif,kadaluarsa,dicabut';
+            $rules['status'] = 'nullable|in:draft,aktif,kadaluarsa,dicabut,diubah';
         }
 
         $validated = $request->validate($rules);
@@ -234,8 +234,9 @@ class DocumentController extends Controller
                 $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? $parentDocument->tanggal_berlaku;
             }
 
+            $parentStatus = $jenisUpload === 'update' ? 'diubah' : 'direvisi';
             if ($request->hasFile('file_pdf')) {
-                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'));
+                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'), $parentStatus);
             }
         } elseif ($request->hasFile('file_pdf')) {
             $this->documentService->createDocument($validated, $request->file('file_pdf'));
@@ -279,7 +280,7 @@ class DocumentController extends Controller
             'tanggal_berlaku' => 'nullable|date|after_or_equal:tanggal_terbit',
             'deskripsi' => 'nullable',
             'file_pdf' => 'nullable|mimes:pdf|max:20480',
-            'status' => 'required|in:draft,aktif,direvisi,kadaluarsa,dicabut',
+            'status' => 'required|in:draft,aktif,direvisi,kadaluarsa,dicabut,diubah',
         ]);
 
         if ($request->hasFile('file_pdf')) {

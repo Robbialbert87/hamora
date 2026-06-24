@@ -66,6 +66,7 @@
                     <option value="aktif">Aktif</option>
                     <option value="draft">Draft</option>
                     <option value="direvisi">Direvisi</option>
+                    <option value="diubah">Diubah</option>
                     <option value="kadaluarsa">Kadaluarsa</option>
                     <option value="dicabut">Dicabut</option>
                 </select>

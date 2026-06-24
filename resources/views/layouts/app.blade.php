@@ -225,6 +225,11 @@
             color: var(--info);
         }
 
+        .badge-diubah {
+            background: rgba(99, 102, 241, 0.15);
+            color: #6366f1;
+        }
+
         .badge-kadaluarsa {
             background: rgba(239, 68, 68, 0.15);
             color: var(--danger);
@@ -243,6 +248,7 @@
         .badge-aktif::before,
         .badge-draft::before,
         .badge-direvisi::before,
+        .badge-diubah::before,
         .badge-kadaluarsa::before,
         .badge-dicabut::before,
         .badge-digantikan::before {
@@ -267,6 +273,11 @@
         .badge-direvisi::before {
             background: var(--info);
             box-shadow: 0 0 8px var(--info);
+        }
+
+        .badge-diubah::before {
+            background: #6366f1;
+            box-shadow: 0 0 8px #6366f1;
         }
 
         .badge-kadaluarsa::before {

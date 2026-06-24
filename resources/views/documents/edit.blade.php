@@ -75,6 +75,7 @@
                             <option value="draft" {{ old('status', $document->status) == 'draft' ? 'selected' : '' }}>Draft</option>
                             <option value="aktif" {{ old('status', $document->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
                             <option value="direvisi" {{ old('status', $document->status) == 'direvisi' ? 'selected' : '' }}>Direvisi</option>
+                            <option value="diubah" {{ old('status', $document->status) == 'diubah' ? 'selected' : '' }}>Diubah</option>
                             <option value="kadaluarsa" {{ old('status', $document->status) == 'kadaluarsa' ? 'selected' : '' }}>Kadaluarsa</option>
                             <option value="dicabut" {{ old('status', $document->status) == 'dicabut' ? 'selected' : '' }}>Dicabut</option>
                         </select>
