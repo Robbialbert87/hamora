@@ -10,6 +10,7 @@ use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
+use setasign\Fpdi\Fpdi;
 
 class DocumentController extends Controller
 {
@@ -334,7 +335,29 @@ class DocumentController extends Controller
         if (!Storage::disk('public')->exists($document->file_pdf)) {
             return back()->with('error', 'File PDF tidak ditemukan.');
         }
-        return Storage::disk('public')->download($document->file_pdf, $document->nama_dokumen . '.pdf');
+
+        $filePath = Storage::disk('public')->path($document->file_pdf);
+
+        $pdf = new Fpdi();
+        $pageCount = $pdf->setSourceFile($filePath);
+
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $templateId = $pdf->importPage($i);
+            $size = $pdf->getTemplateSize($templateId);
+
+            $orientation = $size['width'] > $size['height'] ? 'L' : 'P';
+            $pdf->AddPage($orientation, [$size['width'], $size['height']]);
+            $pdf->useTemplate($templateId);
+
+            $pdf->SetFont('Helvetica', 'B', 10);
+            $pdf->SetTextColor(200, 0, 0);
+            $pdf->SetXY($size['width'] - 32, 8);
+            $pdf->Write(5, 'SALINAN');
+        }
+
+        return response($pdf->Output('S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $document->nama_dokumen . '.pdf"');
     }
 
     public function preview(Document $document)
