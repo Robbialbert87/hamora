@@ -51,11 +51,11 @@
                             @if($doc->status === 'dicabut')
                             <span style="font-size: 10px; background: rgba(108,117,125,0.2); color: #6c757d; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Dicabut</span>
                             @elseif($isCurrent)
-                            <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Sedang dilihat</span>
+                            <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Sedang dilihat v{{ $doc->versi ?? '1' }}</span>
                             @elseif($isLatest)
-                            <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Saat ini</span>
+                            <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Saat ini v{{ $doc->versi ?? '1' }}</span>
                             @else
-                            <span style="font-size: 10px; background: rgba(108,117,125,0.12); color: #6c757d; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Lama</span>
+                            <span style="font-size: 10px; background: rgba(108,117,125,0.12); color: #6c757d; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Lama v{{ $doc->versi ?? '1' }}</span>
                             @endif
                         </div>
                         <div style="font-size: 12px; color: var(--text-secondary); overflow-wrap: break-word; word-break: break-word;">{{ $doc->nama_dokumen }}</div>
