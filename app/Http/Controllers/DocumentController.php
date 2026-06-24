@@ -139,10 +139,31 @@ class DocumentController extends Controller
 
     public function createUpdate()
     {
+        return view('documents.create-update');
+    }
+
+    public function createUpdateDiubah()
+    {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
         $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
-        return view('documents.create-update', compact('bidang', 'kategori', 'documents'));
+        return view('documents.create-update-diubah', compact('bidang', 'kategori', 'documents'));
+    }
+
+    public function createUpdateDicabut()
+    {
+        $bidang = Bidang::all();
+        $kategori = Kategori::all();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
+        return view('documents.create-update-dicabut', compact('bidang', 'kategori', 'documents'));
+    }
+
+    public function createUpdateDicabutSebagian()
+    {
+        $bidang = Bidang::all();
+        $kategori = Kategori::all();
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut'])->get();
+        return view('documents.create-update-dicabut-sebagian', compact('bidang', 'kategori', 'documents'));
     }
 
     public function store(Request $request)

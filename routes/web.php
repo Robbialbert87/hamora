@@ -31,6 +31,9 @@ Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group
             Route::get('/create/baru', [DocumentController::class, 'createBaru'])->name('create.baru');
             Route::get('/create/mou', [DocumentController::class, 'createMou'])->name('create.mou');
             Route::get('/create/update', [DocumentController::class, 'createUpdate'])->name('create.update');
+            Route::get('/create/update/diubah', [DocumentController::class, 'createUpdateDiubah'])->name('create.update.diubah');
+            Route::get('/create/update/dicabut', [DocumentController::class, 'createUpdateDicabut'])->name('create.update.dicabut');
+            Route::get('/create/update/dicabut-sebagian', [DocumentController::class, 'createUpdateDicabutSebagian'])->name('create.update.dicabut-sebagian');
             Route::post('/', [DocumentController::class, 'store'])->name('store');
         });
 
