@@ -271,7 +271,7 @@ class DocumentController extends Controller
     public function update(Request $request, Document $document)
     {
         $validated = $request->validate([
-            'nomor_dokumen' => 'required|unique:documents,nomor_dokumen,' . $document->id,
+            'nomor_dokumen' => 'required',
             'nama_dokumen' => 'required|max:255',
             'tahun' => 'required|integer|min:2000|max:2099',
             'bidang_id' => 'required|exists:bidang,id',
