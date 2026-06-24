@@ -22,16 +22,7 @@
                     <i class="fas fa-plus"></i> Upload Dokumen
                 </a>
                 @endif
-                @can('kelola bidang')
-                @if(isset($defaultStatus) && $defaultStatus === 'kadaluarsa')
-                <form action="{{ route('dashboard.notifikasi-kadaluarsa') }}" method="POST" style="display:inline">
-                    @csrf
-                    <button type="submit" class="btn-outline-glass btn-sm" onclick="return confirm('Kirim notifikasi dokumen kadaluarsa ke email?')">
-                        <i class="fas fa-bell"></i> Kirim Notifikasi
-                    </button>
-                </form>
-                @endif
-                @endcan
+
             </div>
         </div>
 

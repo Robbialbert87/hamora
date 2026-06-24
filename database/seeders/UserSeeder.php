@@ -11,7 +11,6 @@ class UserSeeder extends Seeder
     {
         $superAdmin = User::create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@hamora.test',
             'password' => Hash::make('password'),
             'is_active' => true,
         ]);
@@ -19,7 +18,6 @@ class UserSeeder extends Seeder
 
         $admin = User::create([
             'name' => 'Admin RSUD',
-            'email' => 'admin@hamora.test',
             'password' => Hash::make('password'),
             'is_active' => true,
         ]);
@@ -27,7 +25,6 @@ class UserSeeder extends Seeder
 
         $user = User::create([
             'name' => 'User Biasa',
-            'email' => 'user@hamora.test',
             'password' => Hash::make('password'),
             'is_active' => true,
         ]);

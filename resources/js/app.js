@@ -132,15 +132,6 @@
                     }
                 });
 
-                const emailInput = form.querySelector('input[type="email"]');
-                if (emailInput && emailInput.value) {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(emailInput.value)) {
-                        isValid = false;
-                        emailInput.style.borderColor = '#ff6b6b';
-                    }
-                }
-
                 if (!isValid) {
                     e.preventDefault();
                 }

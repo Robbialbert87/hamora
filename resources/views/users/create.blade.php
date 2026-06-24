@@ -26,14 +26,6 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                               value="{{ old('email') }}" required placeholder="email@example.com">
-                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
                         <label class="form-label">Password <span class="text-danger">*</span></label>
                         <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                                required placeholder="Min. 8 karakter">

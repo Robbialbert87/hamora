@@ -24,7 +24,6 @@
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>Email</th>
                         <th>NIP</th>
                         <th>Bidang</th>
                         <th>Role</th>
@@ -46,7 +45,6 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ $user->email }}</td>
                         <td>{{ $user->nip ?? '-' }}</td>
                         <td>{{ $user->bidang->nama ?? '-' }}</td>
                         <td>

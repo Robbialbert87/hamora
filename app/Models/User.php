@@ -2,13 +2,12 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, SoftDeletes;
+    use HasRoles, SoftDeletes;
 
     protected $fillable = ['name', 'email', 'password', 'avatar', 'nip', 'bidang_id', 'jabatan', 'no_telp', 'is_active', 'must_change_password'];
 
@@ -17,7 +16,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
             'must_change_password' => 'boolean',

@@ -24,15 +24,6 @@
                 </a>
             </li>
             <li class="settings-nav-item">
-                <a href="#" class="settings-nav-link" data-tab="notifications">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                    </svg>
-                    Notifications
-                </a>
-            </li>
-
-            <li class="settings-nav-item">
                 <a href="#" class="settings-nav-link" data-tab="billing">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
@@ -45,48 +36,6 @@
 
     <div class="glass-card">
         <div class="settings-tab-content active" id="tab-profile">
-            <div class="profile-header">
-                <div class="profile-avatar-large">
-                    H
-                    <div class="profile-avatar-edit">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="profile-info">
-                    <h2>{{ config('app.name') }}</h2>
-                    <p>admin@example.com • Administrator</p>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3 class="settings-section-title">Profile Information</h3>
-                <div class="form-grid">
-                    <div class="form-group-settings">
-                        <label>First Name</label>
-                        <input type="text" value="Admin">
-                    </div>
-                    <div class="form-group-settings">
-                        <label>Last Name</label>
-                        <input type="text" value="User">
-                    </div>
-                    <div class="form-group-settings">
-                        <label>Email Address</label>
-                        <input type="email" value="admin@example.com">
-                    </div>
-                    <div class="form-group-settings">
-                        <label>Phone Number</label>
-                        <input type="tel" value="+1 (555) 123-4567">
-                    </div>
-                    <div class="form-group-settings full-width">
-                        <label>Bio</label>
-                        <textarea>Administrator and dashboard manager.</textarea>
-                    </div>
-                </div>
-            </div>
-
             <div class="settings-section">
                 <h3 class="settings-section-title">Preferences</h3>
                 <div class="settings-row">
@@ -208,50 +157,6 @@
         </div>
 
         <div class="settings-tab-content" id="tab-notifications">
-            <div class="settings-section">
-                <h3 class="settings-section-title">Email Notifications</h3>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Account Activity</span>
-                        <span class="settings-label-desc">Get notified about sign-ins and security changes</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">New Features</span>
-                        <span class="settings-label-desc">Learn about new features and updates</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Weekly Reports</span>
-                        <span class="settings-label-desc">Receive weekly analytics summary</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">
-                        <span class="settings-label-title">Marketing Emails</span>
-                        <span class="settings-label-desc">Receive news about promotions and offers</span>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-
             <div class="settings-section">
                 <h3 class="settings-section-title">Push Notifications</h3>
                 <div class="settings-row">

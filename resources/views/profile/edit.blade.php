@@ -25,13 +25,6 @@
                         @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" value="{{ $user->email }}" disabled>
-                        <div class="text-muted mt-1" style="font-size: 12px;">Email tidak dapat diubah</div>
-                    </div>
-                </div>
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label">Foto Profile</label>

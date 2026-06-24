@@ -148,12 +148,10 @@ class SyncUserService
 
         $user = User::create([
             'name' => $nama,
-            'email' => $nip . '@hamora.local',
             'password' => $nip,
             'nip' => $nip,
             'jabatan' => $jabatan,
             'is_active' => true,
-            'email_verified_at' => now(),
             'must_change_password' => true,
         ]);
 

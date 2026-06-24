@@ -26,7 +26,6 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
             'nip' => 'nullable|unique:users',
             'bidang_id' => 'nullable|exists:bidang,id',
@@ -53,7 +52,6 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
             'nip' => 'nullable|unique:users,nip,' . $user->id,
             'bidang_id' => 'nullable|exists:bidang,id',
             'jabatan' => 'nullable|max:255',

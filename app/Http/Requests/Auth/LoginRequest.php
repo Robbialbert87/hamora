@@ -55,16 +55,13 @@ class LoginRequest extends FormRequest
                     if ($user) {
                         $user->update([
                             'name' => $sijagaUser['name'],
-                            'email' => $sijagaUser['email'] ?? $user->email,
                         ]);
                     } else {
                         $user = User::create([
                             'name' => $sijagaUser['name'],
-                            'email' => $sijagaUser['email'] ?? $nip . '@hamora.local',
                             'password' => $password,
                             'nip' => $sijagaUser['nip'],
                             'is_active' => true,
-                            'email_verified_at' => now(),
                         ]);
                     }
 

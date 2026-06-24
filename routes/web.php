@@ -16,7 +16,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/dashboard/notifikasi-kadaluarsa', [DashboardController::class, 'notifikasiKadaluarsa'])->name('dashboard.notifikasi-kadaluarsa')->middleware('can:kelola bidang');
+
 
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', [DocumentController::class, 'index'])->name('index');

@@ -123,7 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'kadaluarsa_email' => env('KADALUARSA_EMAIL'),
-
 ];
 
