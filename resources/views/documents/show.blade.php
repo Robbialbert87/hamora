@@ -115,6 +115,8 @@
                 @endphp
                 @if($document->status === 'dicabut')
                     <div><span class="badge badge-dicabut" style="font-size: 14px; padding: 8px 16px;">Dicabut</span></div>
+                @elseif($document->status === 'diubah')
+                    <div><span class="badge badge-diubah" style="font-size: 14px; padding: 8px 16px;">Telah Diubah</span></div>
                 @elseif($isDocLatest)
                     <div><span class="badge badge-aktif" style="font-size: 14px; padding: 8px 16px;">Aktif</span></div>
                 @elseif($docNext)

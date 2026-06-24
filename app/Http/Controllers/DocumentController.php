@@ -87,7 +87,7 @@ class DocumentController extends Controller
                 return $doc->tanggal_terbit ? $doc->tanggal_terbit->format('d/m/Y') : '-';
             })
             ->addColumn('status_badge', function ($doc) {
-                $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa', 'dicabut' => 'Dicabut', 'diubah' => 'Diubah'];
+                $labels = ['draft' => 'Draft', 'aktif' => 'Aktif', 'direvisi' => 'Direvisi', 'kadaluarsa' => 'Kadaluarsa', 'dicabut' => 'Dicabut', 'diubah' => 'Telah Diubah'];
                 $colors = ['draft' => 'warning', 'aktif' => 'success', 'direvisi' => 'info', 'kadaluarsa' => 'danger', 'dicabut' => 'secondary', 'diubah' => 'primary'];
                 $label = $labels[$doc->status] ?? e($doc->status);
                 $color = $colors[$doc->status] ?? 'secondary';
