@@ -25,8 +25,12 @@
                 @forelse($revisionHistory as $i => $doc)
                 @php
                     $isLatest = $doc->id === $latestDocId;
+                    $isCurrent = $doc->id === $document->id;
                 @endphp
-                <div style="display: flex; gap: 12px; position: relative; padding-bottom: 16px;">
+                <div style="display: flex; gap: 12px; position: relative; padding-bottom: 16px; {{ $isCurrent ? 'background: rgba(5,150,105,0.06); border-radius: 12px; padding-left: 8px; padding-right: 8px; margin-left: -8px; margin-right: -8px;' : '' }}">
+                    @if($isCurrent)
+                    <div style="position: absolute; left: 0; top: 4px; bottom: 12px; width: 3px; background: var(--emerald); border-radius: 2px;"></div>
+                    @endif
                     <div style="display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0;">
                         @if($loop->first && $loop->count > 1)
                         <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
@@ -34,8 +38,8 @@
                         @if(!$loop->first && !$loop->last)
                         <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
                         @endif
-                        <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; {{ $doc->status === 'dicabut' ? 'background: rgba(108,117,125,0.25); color: #6c757d;' : ($isLatest ? 'background: var(--emerald); color: #fff;' : 'background: rgba(108,117,125,0.15); color: #6c757d;') }}">
-                            <i class="fas {{ $doc->status === 'dicabut' ? 'fa-archive' : ($isLatest ? 'fa-chevron-right' : 'fa-file') }}" style="font-size: 10px;"></i>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; {{ $doc->status === 'dicabut' ? 'background: rgba(108,117,125,0.25); color: #6c757d;' : ($isLatest ? 'background: var(--emerald); color: #fff;' : ($isCurrent ? 'background: var(--emerald); color: #fff;' : 'background: rgba(108,117,125,0.15); color: #6c757d;')) }}">
+                            <i class="fas {{ $doc->status === 'dicabut' ? 'fa-archive' : ($isLatest || $isCurrent ? 'fa-chevron-right' : 'fa-file') }}" style="font-size: 10px;"></i>
                         </div>
                         @if(!$loop->last)
                         <div style="width: 2px; flex: 1; background: var(--glass-border);"></div>
@@ -43,9 +47,11 @@
                     </div>
                     <div style="flex: 1; padding-top: 2px;">
                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; {{ $isLatest ? 'font-weight: 600; color: var(--emerald);' : 'font-weight: 500; color: var(--text-primary);' }} text-decoration: none; overflow-wrap: break-word; word-break: break-word;">{{ $doc->nomor_dokumen }}</a>
+                            <a href="{{ route('documents.show', $doc->id) }}" style="font-size: 13px; {{ $isCurrent ? 'font-weight: 700; color: var(--emerald);' : ($isLatest ? 'font-weight: 600; color: var(--emerald);' : 'font-weight: 500; color: var(--text-primary);') }} text-decoration: none; overflow-wrap: break-word; word-break: break-word;">{{ $doc->nomor_dokumen }}</a>
                             @if($doc->status === 'dicabut')
                             <span style="font-size: 10px; background: rgba(108,117,125,0.2); color: #6c757d; padding: 1px 8px; border-radius: 8px; font-weight: 600;">Dicabut</span>
+                            @elseif($isCurrent)
+                            <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Sedang dilihat</span>
                             @elseif($isLatest)
                             <span style="font-size: 10px; background: rgba(5,150,105,0.15); color: var(--emerald); padding: 1px 8px; border-radius: 8px; font-weight: 600;">Saat ini</span>
                             @else
@@ -56,6 +62,8 @@
                         <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap;">
                             @if($doc->status === 'dicabut')
                                 <span class="badge badge-dicabut" style="font-size: 10px; padding: 2px 8px;">Dicabut</span>
+                            @elseif($isCurrent)
+                                <span class="badge badge-aktif" style="font-size: 10px; padding: 2px 8px;">Aktif</span>
                             @elseif($isLatest)
                                 <span class="badge badge-aktif" style="font-size: 10px; padding: 2px 8px;">Aktif</span>
                             @else
