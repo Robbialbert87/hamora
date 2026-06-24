@@ -62,8 +62,6 @@
                         <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap;">
                             @if($doc->status === 'dicabut')
                                 <span class="badge badge-dicabut" style="font-size: 10px; padding: 2px 8px;">Dicabut</span>
-                            @elseif($isCurrent)
-                                <span class="badge badge-aktif" style="font-size: 10px; padding: 2px 8px;">Aktif</span>
                             @elseif($isLatest)
                                 <span class="badge badge-aktif" style="font-size: 10px; padding: 2px 8px;">Aktif</span>
                             @else
