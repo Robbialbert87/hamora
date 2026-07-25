@@ -1,56 +1,71 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <title>@yield('title', config('app.name', 'HAMORA'))</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/webp" href="{{ asset('images/logo.webp') }}">
-    <title>@yield('title', config('app.name', 'HAMORA'))</title>
 
-    {{-- Bootstrap 5 CSS --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    {{-- Font Awesome 6 --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
-    {{-- DataTables CSS --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.11/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-
-    {{-- SweetAlert2 CSS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-    {{-- Google Fonts --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
+    <!-- App CSS -->
+    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
-    <div class="background"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+<body id="body" class="auth-page">
+    <!-- Full-Screen Welcome Section -->
+    <div class="auth-welcome">
+        <div class="auth-welcome-content">
+            <div class="auth-welcome-logo">
+                <img src="{{ asset('images/logo.webp') }}" alt="HAMORA" class="auth-logo-img">
+            </div>
+            <h1 class="auth-welcome-title">Selamat Datang di <span class="text-warning">HAMORA</span></h1>
+            <p class="auth-welcome-subtitle">Himpunan Arsip Manajemen Online RSUD Abdul Manap</p>
+            <div class="auth-welcome-divider"></div>
 
+            @hasSection('login-button')
+                @yield('login-button')
+            @else
+                <button type="button" class="btn btn-login-trigger" onclick="openLoginModal()">
+                    <i class="ti ti-login me-2"></i>Masuk
+                </button>
+            @endif
+        </div>
 
+        @hasSection('inline-content')
+            <div class="auth-inline-card">
+                @yield('inline-content')
+            </div>
+        @endif
 
-    <div class="login-page">
-        @yield('content')
+        <div class="auth-welcome-footer">
+            <p>&copy; {{ date('Y') }} RSUD Abdul Manap. All rights reserved.</p>
+        </div>
     </div>
 
-    {{-- Bootstrap 5 JS Bundle --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('content')
 
-    {{-- jQuery --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Vendor JS -->
+    <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/feather-icons/feather.min.js') }}"></script>
 
-    {{-- SweetAlert2 --}}
+    <!-- App JS -->
+    <script src="{{ asset('assets/js/app.js') }}"></script>
+
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function openLoginModal() {
+            var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+    </script>
 
     @yield('scripts')
 </body>

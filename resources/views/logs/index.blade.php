@@ -1,33 +1,49 @@
 @extends('layouts.app')
 
 @section('title', 'Log Aktivitas - HAMORA')
-@section('page-title', 'Log Aktivitas')
 
 @section('content')
-<section class="content-grid" style="grid-template-columns: 1fr;">
-    <div class="glass-card table-card" style="grid-column: span 1;">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title">Log Aktivitas</h2>
-                <p class="card-subtitle">Riwayat aktivitas pengguna</p>
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="float-end">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item active">Log Aktivitas</li>
+                </ol>
             </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table class="data-table" id="logs-table" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>User</th>
-                        <th>Aksi</th>
-                        <th>Deskripsi</th>
-                        <th>Waktu</th>
-                    </tr>
-                </thead>
-            </table>
+            <h4 class="page-title">Log Aktivitas</h4>
         </div>
     </div>
-</section>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="mb-3">
+                    <h4 class="card-title mb-0">Log Aktivitas</h4>
+                    <p class="text-muted mb-0">Riwayat aktivitas pengguna</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered w-100" id="logs-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>User</th>
+                                <th>Aksi</th>
+                                <th>Deskripsi</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')

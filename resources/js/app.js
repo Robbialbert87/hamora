@@ -1,118 +1,54 @@
 (function() {
     'use strict';
 
-    function initTiltEffect() {
-        document.querySelectorAll('.glass-card-3d').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-            });
+    function initMobileMenu() {
+        const menuToggle = document.getElementById('togglemenu');
+        const body = document.getElementById('body');
 
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-            });
-        });
-    }
+        if (!menuToggle || !body) return;
 
-    function animateCounter(element, target, duration = 2000) {
-        const start = 0;
-        const startTime = performance.now();
-
-        function update(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(start + (target - start) * easeOut);
-
-            if (element.dataset.prefix) {
-                element.textContent = element.dataset.prefix + current.toLocaleString() + (element.dataset.suffix || '');
-            } else {
-                element.textContent = current.toLocaleString() + (element.dataset.suffix || '');
-            }
-
-            if (progress < 1) {
-                requestAnimationFrame(update);
-            }
+        function isMobile() {
+            return window.innerWidth < 1025;
         }
 
-        requestAnimationFrame(update);
-    }
+        function openSidebar() {
+            body.classList.add('sidebar-open');
+            body.classList.remove('enlarge-menu-all');
+        }
 
-    function initCounters() {
-        const counters = document.querySelectorAll('.stat-value');
-        counters.forEach(counter => {
-            const text = counter.textContent;
-            const value = parseInt(text.replace(/[^0-9]/g, ''));
-            if (text.includes('$')) {
-                counter.dataset.prefix = '$';
-            }
-            if (text.includes('%')) {
-                counter.dataset.suffix = '%';
-            }
-            animateCounter(counter, value);
-        });
-    }
+        function closeSidebar() {
+            body.classList.remove('sidebar-open');
+            body.classList.add('enlarge-menu-all');
+        }
 
-    function initMobileMenu() {
-        const menuToggle = document.querySelector('.mobile-menu-toggle');
-        const sidebar = document.getElementById('sidebar');
-
-        if (menuToggle && sidebar) {
-            let overlay = document.querySelector('.sidebar-overlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.className = 'sidebar-overlay';
-                document.body.appendChild(overlay);
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            }
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('show');
-            }
-
-            menuToggle.addEventListener('click', () => {
-                if (sidebar.classList.contains('open')) {
+        menuToggle.addEventListener('click', function(e) {
+            if (isMobile()) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (body.classList.contains('sidebar-open')) {
                     closeSidebar();
                 } else {
                     openSidebar();
                 }
-            });
+            }
+        });
 
-            overlay.addEventListener('click', closeSidebar);
-
-            document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-            });
-
-            document.querySelectorAll('.nav-link:not([data-bs-toggle="collapse"])').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth < 992) {
-                        closeSidebar();
-                    }
-                });
-            });
-
-            document.addEventListener('click', (e) => {
-                if (sidebar.classList.contains('open') &&
-                    !sidebar.contains(e.target) &&
-                    !menuToggle.contains(e.target)) {
+        document.addEventListener('click', function(e) {
+            if (isMobile() && body.classList.contains('sidebar-open')) {
+                const sidebar = document.querySelector('.leftbar-tab-menu');
+                const toggleBtn = document.getElementById('togglemenu');
+                if (sidebar && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
                     closeSidebar();
                 }
-            });
-        }
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (!isMobile()) {
+                closeSidebar();
+                body.classList.remove('enlarge-menu-all');
+            }
+        });
     }
 
     function initFormValidation() {
@@ -121,14 +57,14 @@
         forms.forEach(form => {
             form.addEventListener('submit', (e) => {
                 let isValid = true;
-                const inputs = form.querySelectorAll('.form-input[required], .form-control[required]');
+                const inputs = form.querySelectorAll('.form-control[required], .form-input[required]');
 
                 inputs.forEach(input => {
                     if (!input.value.trim()) {
                         isValid = false;
-                        input.style.borderColor = '#ff6b6b';
+                        input.classList.add('is-invalid');
                     } else {
-                        input.style.borderColor = '';
+                        input.classList.remove('is-invalid');
                     }
                 });
 
@@ -145,53 +81,68 @@
         toggleButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const input = button.parentElement.querySelector('input');
-                const icon = button.querySelector('svg');
+                const icon = button.querySelector('i');
 
                 if (input.type === 'password') {
                     input.type = 'text';
-                    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+                    if (icon) {
+                        icon.className = 'ti ti-eye-off';
+                    }
                 } else {
                     input.type = 'password';
-                    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+                    if (icon) {
+                        icon.className = 'ti ti-eye';
+                    }
                 }
             });
         });
     }
 
-    function initSettingsTabs() {
-        const tabLinks = document.querySelectorAll('.settings-nav-link[data-tab]');
-        if (tabLinks.length === 0) return;
-
-        tabLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const tabId = link.getAttribute('data-tab');
-
-                document.querySelectorAll('.settings-nav-link').forEach(navLink => {
-                    navLink.classList.remove('active');
-                });
-                link.classList.add('active');
-
-                document.querySelectorAll('.settings-tab-content').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-
-                const targetTab = document.getElementById('tab-' + tabId);
-                if (targetTab) {
-                    targetTab.classList.add('active');
+    function initSweetAlert() {
+        window.showAlert = function(type, title, text, callback) {
+            Swal.fire({
+                icon: type,
+                title: title,
+                text: text,
+                confirmButtonColor: '#556ee5'
+            }).then((result) => {
+                if (callback && typeof callback === 'function') {
+                    callback(result);
                 }
             });
-        });
+        };
 
+        window.confirmDelete = function(callback) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed && typeof callback === 'function') {
+                    callback();
+                }
+            });
+        };
+    }
+
+    function initTooltips() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
     }
 
     function init() {
-        initTiltEffect();
-        initCounters();
         initMobileMenu();
         initFormValidation();
         initPasswordToggle();
-        initSettingsTabs();
+        initSweetAlert();
+        initTooltips();
     }
 
     if (document.readyState === 'loading') {

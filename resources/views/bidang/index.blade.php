@@ -1,64 +1,82 @@
 @extends('layouts.app')
 
 @section('title', 'Bidang - HAMORA')
-@section('page-title', 'Bidang')
 
 @section('content')
-<section class="content-grid" style="grid-template-columns: 1fr;">
-    <div class="glass-card table-card" style="grid-column: span 1;">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title">Daftar Bidang</h2>
-                <p class="card-subtitle">Kelola bidang dokumen</p>
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="float-end">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('bidang.index') }}">Bidang</a></li>
+                    <li class="breadcrumb-item active">Daftar Bidang</li>
+                </ol>
             </div>
-            <div class="card-header-actions">
-                <a href="{{ route('bidang.create') }}" class="btn-emerald btn-sm">
-                    <i class="fas fa-plus"></i> Tambah Bidang
-                </a>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table class="data-table" id="bidang-table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Slug</th>
-                        <th>Jumlah Dokumen</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($bidang ?? [] as $b)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $b->nama }}</td>
-                        <td><code>{{ $b->slug }}</code></td>
-                        <td>{{ $b->documents_count ?? $b->documents->count() }}</td>
-                        <td>
-                            <div class="action-btns">
-                                <a href="{{ route('bidang.edit', $b->id) }}" class="btn-outline-glass btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <button class="btn-outline-glass btn-sm btn-delete-bidang"
-                                        data-url="{{ route('bidang.destroy', $b->id) }}"
-                                        data-name="{{ $b->nama }}">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">Belum ada bidang</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <h4 class="page-title">Daftar Bidang</h4>
         </div>
     </div>
-</section>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="card-title mb-0">Daftar Bidang</h4>
+                        <p class="text-muted mb-0">Kelola bidang dokumen</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('bidang.create') }}" class="btn btn-primary btn-sm">
+                            <i class="ti ti-plus"></i> Tambah Bidang
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0" id="bidang-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Slug</th>
+                                <th>Jumlah Dokumen</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($bidang ?? [] as $b)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $b->nama }}</td>
+                                <td><code>{{ $b->slug }}</code></td>
+                                <td>{{ $b->documents_count ?? $b->documents->count() }}</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ route('bidang.edit', $b->id) }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="ti ti-pencil"></i> Edit
+                                        </a>
+                                        <button class="btn btn-outline-danger btn-sm btn-delete-bidang"
+                                                data-url="{{ route('bidang.destroy', $b->id) }}"
+                                                data-name="{{ $b->nama }}">
+                                            <i class="ti ti-trash"></i> Hapus
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Belum ada bidang</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')

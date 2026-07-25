@@ -1,64 +1,82 @@
 @extends('layouts.app')
 
 @section('title', 'Kategori - HAMORA')
-@section('page-title', 'Kategori')
 
 @section('content')
-<section class="content-grid" style="grid-template-columns: 1fr;">
-    <div class="glass-card table-card" style="grid-column: span 1;">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title">Daftar Kategori</h2>
-                <p class="card-subtitle">Kelola kategori dokumen</p>
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="float-end">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('kategori.index') }}">Kategori</a></li>
+                    <li class="breadcrumb-item active">Daftar Kategori</li>
+                </ol>
             </div>
-            <div class="card-header-actions">
-                <a href="{{ route('kategori.create') }}" class="btn-emerald btn-sm">
-                    <i class="fas fa-plus"></i> Tambah Kategori
-                </a>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table class="data-table" id="kategori-table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Slug</th>
-                        <th>Jumlah Dokumen</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($kategori ?? [] as $k)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $k->nama }}</td>
-                        <td><code>{{ $k->slug }}</code></td>
-                        <td>{{ $k->documents_count ?? $k->documents->count() }}</td>
-                        <td>
-                            <div class="action-btns">
-                                <a href="{{ route('kategori.edit', $k->id) }}" class="btn-outline-glass btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <button class="btn-outline-glass btn-sm btn-delete-kategori"
-                                        data-url="{{ route('kategori.destroy', $k->id) }}"
-                                        data-name="{{ $k->nama }}">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">Belum ada kategori</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <h4 class="page-title">Daftar Kategori</h4>
         </div>
     </div>
-</section>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="card-title mb-0">Daftar Kategori</h4>
+                        <p class="text-muted mb-0">Kelola kategori dokumen</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('kategori.create') }}" class="btn btn-primary btn-sm">
+                            <i class="ti ti-plus"></i> Tambah Kategori
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0" id="kategori-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Slug</th>
+                                <th>Jumlah Dokumen</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($kategori ?? [] as $k)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $k->nama }}</td>
+                                <td><code>{{ $k->slug }}</code></td>
+                                <td>{{ $k->documents_count ?? $k->documents->count() }}</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="ti ti-pencil"></i> Edit
+                                        </a>
+                                        <button class="btn btn-outline-danger btn-sm btn-delete-kategori"
+                                                data-url="{{ route('kategori.destroy', $k->id) }}"
+                                                data-name="{{ $k->nama }}">
+                                            <i class="ti ti-trash"></i> Hapus
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Belum ada kategori</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')

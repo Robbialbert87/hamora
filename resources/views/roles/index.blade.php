@@ -1,70 +1,88 @@
 @extends('layouts.app')
 
 @section('title', 'Role Management - HAMORA')
-@section('page-title', 'Role Management')
 
 @section('content')
-<section class="content-grid" style="grid-template-columns: 1fr;">
-    <div class="glass-card table-card" style="grid-column: span 1;">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title">Daftar Role</h2>
-                <p class="card-subtitle">Kelola hak akses pengguna</p>
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="float-end">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('roles.index') }}">Roles</a></li>
+                    <li class="breadcrumb-item active">Daftar Role</li>
+                </ol>
             </div>
-            <div class="card-header-actions">
-                <a href="{{ route('roles.create') }}" class="btn-emerald btn-sm">
-                    <i class="fas fa-plus"></i> Tambah Role
-                </a>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table class="data-table" id="roles-table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Role</th>
-                        <th>Permissions</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($roles ?? [] as $role)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td><strong>{{ $role->name }}</strong></td>
-                        <td>
-                            <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-                                @foreach($role->permissions as $perm)
-                                <span style="background: rgba(52, 211, 153, 0.15); color: var(--emerald-light); padding: 2px 8px; border-radius: 10px; font-size: 11px;">{{ $perm->name }}</span>
-                                @endforeach
-                            </div>
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <a href="{{ route('roles.edit', $role->id) }}" class="btn-outline-glass btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                @if($role->name !== 'Super Admin')
-                                <button class="btn-outline-glass btn-sm btn-delete-role"
-                                        data-url="{{ route('roles.destroy', $role->id) }}"
-                                        data-name="{{ $role->name }}">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Belum ada role</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <h4 class="page-title">Daftar Role</h4>
         </div>
     </div>
-</section>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="card-title mb-0">Daftar Role</h4>
+                        <p class="text-muted mb-0">Kelola hak akses pengguna</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm">
+                            <i class="ti ti-plus"></i> Tambah Role
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0" id="roles-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Role</th>
+                                <th>Permissions</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($roles ?? [] as $role)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td><strong>{{ $role->name }}</strong></td>
+                                <td>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                        @foreach($role->permissions as $perm)
+                                        <span class="badge bg-light text-dark">{{ $perm->name }}</span>
+                                        @endforeach
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="ti ti-pencil"></i> Edit
+                                        </a>
+                                        @if($role->name !== 'Super Admin')
+                                        <button class="btn btn-outline-danger btn-sm btn-delete-role"
+                                                data-url="{{ route('roles.destroy', $role->id) }}"
+                                                data-name="{{ $role->name }}">
+                                            <i class="ti ti-trash"></i> Hapus
+                                        </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Belum ada role</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')

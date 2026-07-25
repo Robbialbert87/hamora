@@ -10,6 +10,8 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
 
+use App\Http\Controllers\MouController;
+
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
@@ -52,6 +54,29 @@ Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group
         });
 
         Route::get('/{document}', [DocumentController::class, 'show'])->name('show')->middleware('can:lihat dokumen');
+    });
+
+    Route::prefix('mou')->name('mou.')->group(function () {
+        Route::get('/', [MouController::class, 'index'])->name('index');
+        Route::get('/data', [MouController::class, 'data'])->name('data');
+
+        Route::middleware('can:upload dokumen')->group(function () {
+            Route::get('/create', [MouController::class, 'create'])->name('create');
+            Route::post('/', [MouController::class, 'store'])->name('store');
+        });
+
+        Route::middleware('can:edit dokumen')->group(function () {
+            Route::get('/{mou}/edit', [MouController::class, 'edit'])->name('edit');
+            Route::put('/{mou}', [MouController::class, 'update'])->name('update');
+        });
+
+        Route::middleware('can:hapus dokumen')->group(function () {
+            Route::delete('/{mou}', [MouController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::get('/{mou}/download', [MouController::class, 'download'])->name('download');
+        Route::get('/{mou}/preview', [MouController::class, 'preview'])->name('preview');
+        Route::get('/{mou}', [MouController::class, 'show'])->name('show')->middleware('can:lihat dokumen');
     });
 
     Route::resource('bidang', BidangController::class)->middleware('can:kelola bidang');

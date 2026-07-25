@@ -95,13 +95,15 @@ class DocumentController extends Controller
                 return "<span class=\"badge bg-{$color}\">{$label}</span>";
             })
             ->addColumn('action', function ($doc) {
-                $btn = '<a href="' . e(route('documents.show', $doc->id)) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>';
+                $btn = '<div class="d-flex align-items-center gap-1">';
+                $btn .= '<a href="' . e(route('documents.show', $doc->id)) . '" class="btn btn-light-info btn-icon" title="Lihat"><i class="ti ti-eye"></i></a>';
                 if (auth()->user()->can('edit dokumen')) {
-                    $btn .= ' <a href="' . e(route('documents.edit', $doc->id)) . '" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>';
+                    $btn .= '<a href="' . e(route('documents.edit', $doc->id)) . '" class="btn btn-light-warning btn-icon" title="Edit"><i class="ti ti-pencil"></i></a>';
                 }
                 if (auth()->user()->can('hapus dokumen')) {
-                    $btn .= ' <button class="btn btn-sm btn-danger btn-delete" data-url="' . e(route('documents.destroy', $doc->id)) . '" data-name="' . e($doc->nama_dokumen) . '"><i class="fas fa-trash"></i></button>';
+                    $btn .= '<button class="btn btn-light-danger btn-icon btn-delete" title="Hapus" data-url="' . e(route('documents.destroy', $doc->id)) . '" data-name="' . e($doc->nama_dokumen) . '"><i class="ti ti-trash"></i></button>';
                 }
+                $btn .= '</div>';
                 return $btn;
             })
             ->addColumn('latest_revision', function ($doc) {

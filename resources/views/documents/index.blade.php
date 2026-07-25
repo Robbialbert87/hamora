@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen Aktif - HAMORA' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen Kadaluarsa - HAMORA' : (($defaultStatus ?? false) ? ucfirst($defaultStatus) . ' - HAMORA' : 'Dokumen - HAMORA')))
-@section('page-title', isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen Aktif' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen Kadaluarsa' : (($defaultStatus ?? false) ? ucfirst($defaultStatus) : 'Dokumen')))
 
 @section('content')
 @if(isset($defaultStatus) && in_array($defaultStatus, ['aktif', 'kadaluarsa']))
@@ -9,94 +8,114 @@
     #filter-group-kategori, #filter-group-status { display: none !important; }
 </style>
 @endif
-<section class="content-grid" style="grid-template-columns: 1fr;">
-    <div class="glass-card table-card" style="grid-column: span 1;">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title">Daftar Dokumen</h2>
-                <p class="card-subtitle">{{ isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen yang sedang berlaku' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen yang sudah melewati masa berlaku' : 'Kelola seluruh dokumen') }}</p>
-            </div>
-            <div class="card-header-actions">
-                @if(!isset($defaultStatus) || !in_array($defaultStatus, ['aktif', 'kadaluarsa']))
-                <a href="{{ route('documents.create') }}" class="btn-emerald btn-sm">
-                    <i class="fas fa-plus"></i> Upload Dokumen
-                </a>
-                @endif
 
+@php
+    $pageTitle = isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen Aktif' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen Kadaluarsa' : (($defaultStatus ?? false) ? ucfirst($defaultStatus) : 'Dokumen'));
+    $pageDesc = isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen yang sedang berlaku' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen yang sudah melewati masa berlaku' : 'Kelola seluruh dokumen');
+@endphp
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="float-end">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item active">{{ $pageTitle }}</li>
+                </ol>
             </div>
+            <h4 class="page-title">{{ $pageTitle }}</h4>
         </div>
+    </div>
+</div>
 
-        {{-- Filter Row --}}
-        <div class="filter-row">
-            <div class="form-group">
-                <label class="form-label">Cari Dokumen</label>
-                <input type="text" id="filter-nama" class="form-control" placeholder="Cari nomor atau nama dokumen...">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Tahun</label>
-                <select id="filter-tahun" class="form-select">
-                    <option value="">Semua</option>
-                    @foreach(range(date('Y') + 1, date('Y') - 10) as $thn)
-                    <option value="{{ $thn }}">{{ $thn }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Bidang</label>
-                <select id="filter-bidang" class="form-select">
-                    <option value="">Semua</option>
-                    @foreach($bidang ?? [] as $b)
-                    <option value="{{ $b->id }}">{{ $b->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group" id="filter-group-kategori">
-                <label class="form-label">Kategori</label>
-                <select id="filter-kategori" class="form-select">
-                    <option value="">Semua</option>
-                    @foreach($kategori ?? [] as $k)
-                    <option value="{{ $k->id }}">{{ $k->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group" id="filter-group-status">
-                <label class="form-label">Status</label>
-                <select id="filter-status" class="form-select">
-                    <option value="">Semua</option>
-                    <option value="aktif">Aktif</option>
-                    <option value="draft">Draft</option>
-                    <option value="direvisi">Direvisi</option>
-                    <option value="diubah">Diubah</option>
-                    <option value="kadaluarsa">Kadaluarsa</option>
-                    <option value="dicabut">Dicabut</option>
-                </select>
-            </div>
-            <div class="filter-actions">
-                <div class="filter-btn-row">
-                    <button class="btn-emerald btn-sm" id="btn-cari"><i class="fas fa-search"></i> Cari</button>
-                    <button class="btn-outline-glass btn-sm" id="btn-reset"><i class="fas fa-undo"></i> Reset</button>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">{{ $pageTitle }}</h5>
+                        <p class="text-muted mb-0" style="font-size: 12.5px;">{{ $pageDesc }}</p>
+                    </div>
+                </div>
+
+                <div class="row g-2 align-items-end mb-3">
+                    <div class="col-md-3 col-lg-2">
+                        <label class="form-label">Cari</label>
+                        <input type="text" id="filter-nama" class="form-control form-control-sm" placeholder="Nomor atau nama...">
+                    </div>
+                    <div class="col-md-2 col-lg-1">
+                        <label class="form-label">Tahun</label>
+                        <select id="filter-tahun" class="form-select form-select-sm">
+                            <option value="">Semua</option>
+                            @foreach(range(date('Y') + 1, date('Y') - 10) as $thn)
+                            <option value="{{ $thn }}">{{ $thn }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                        <label class="form-label">Bidang</label>
+                        <select id="filter-bidang" class="form-select form-select-sm">
+                            <option value="">Semua</option>
+                            @foreach($bidang ?? [] as $b)
+                            <option value="{{ $b->id }}">{{ $b->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-lg-2" id="filter-group-kategori">
+                        <label class="form-label">Kategori</label>
+                        <select id="filter-kategori" class="form-select form-select-sm">
+                            <option value="">Semua</option>
+                            @foreach($kategori ?? [] as $k)
+                            <option value="{{ $k->id }}">{{ $k->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-lg-2" id="filter-group-status">
+                        <label class="form-label">Status</label>
+                        <select id="filter-status" class="form-select form-select-sm">
+                            <option value="">Semua</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="draft">Draft</option>
+                            <option value="direvisi">Direvisi</option>
+                            <option value="diubah">Diubah</option>
+                            <option value="kadaluarsa">Kadaluarsa</option>
+                            <option value="dicabut">Dicabut</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-lg-auto ms-auto">
+                        <label class="form-label d-none d-lg-block">&nbsp;</label>
+                        <div class="d-flex gap-1 align-items-center">
+                            <button class="btn btn-primary btn-sm" id="btn-cari"><i class="ti ti-search"></i></button>
+                            <button class="btn btn-outline-secondary btn-sm" id="btn-reset"><i class="ti ti-refresh"></i></button>
+                            @if(!isset($defaultStatus) || !in_array($defaultStatus, ['aktif', 'kadaluarsa']))
+                            <div class="vr mx-1 d-none d-lg-block"></div>
+                            <a href="{{ route('documents.create') }}" class="btn btn-success btn-sm" title="Upload Dokumen"><i class="ti ti-upload"></i></a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover w-100" id="documents-table" style="border-collapse: separate; border-spacing: 0;">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nomor Dokumen</th>
+                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nama Dokumen</th>
+                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Bidang</th>
+                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Kategori</th>
+                                <th class="text-center" style="width: 105px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Terbit</th>
+                                <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Status</th>
+                                <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
-
-        <div class="table-wrapper">
-            <table class="data-table" id="documents-table" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nomor Dokumen</th>
-                        <th>Nama Dokumen</th>
-                        <th>Bidang</th>
-                        <th>Kategori</th>
-                        <th>Tanggal Terbit</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
     </div>
-</section>
+</div>
 @endsection
 
 @section('scripts')
@@ -120,25 +139,32 @@
                 }
             },
             searching: false,
+            lengthChange: true,
+            lengthMenu: [10, 25, 50, 100],
             responsive: false,
-            scrollX: true,
+            pageLength: 10,
+            dom: '<"row px-2 mt-2"<"col-12"t>><"row align-items-center mt-2 px-2"<"col"l><"col-auto"i><"col"p>>',
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
                 { data: 'nomor_dokumen', name: 'nomor_dokumen' },
                 { data: 'nama_dokumen', name: 'nama_dokumen', render: function(data, type, row) {
                     if (type === 'display') {
-                        return '<span style="max-width: 250px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + $('<span>').text(data).html() + '">' + $('<span>').text(data).html() + '</span>';
+                        return '<span class="d-inline-block text-truncate" style="max-width: 220px;" title="' + $('<span>').text(data).html() + '">' + $('<span>').text(data).html() + '</span>';
                     }
                     return data;
                 } },
                 { data: 'bidang', name: 'bidang.nama' },
                 { data: 'kategori', name: 'kategori.nama' },
-                { data: 'tanggal_terbit_formatted', name: 'tanggal_terbit' },
-                { data: 'status_badge', name: 'status' },
-                { data: 'action', name: 'aksi', orderable: false, searchable: false }
+                { data: 'tanggal_terbit_formatted', name: 'tanggal_terbit', className: 'text-center' },
+                { data: 'status_badge', name: 'status', className: 'text-center' },
+                { data: 'action', name: 'aksi', orderable: false, searchable: false, className: 'text-center' }
             ],
             language: {
-                url: '/assets/lang/Indonesian.json'
+                url: '/assets/lang/Indonesian.json',
+                info: 'Menampilkan _START_ - _END_ dari _TOTAL_ data',
+                infoEmpty: 'Tidak ada data',
+                infoFiltered: '',
+                lengthMenu: '_MENU_'
             },
             order: [[5, 'desc']]
         });
@@ -175,11 +201,11 @@
             var name = $(this).data('name');
             Swal.fire({
                 title: 'Hapus Dokumen?',
-                text: 'Yakin ingin menghapus "' + name + '"?',
+                html: 'Yakin ingin menghapus <strong>"' + name + '"</strong>?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#6b7280',
+                cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Ya, hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
@@ -192,7 +218,7 @@
                             _token: '{{ csrf_token() }}'
                         },
                         success: function() {
-                            Swal.fire('Terhapus!', 'Dokumen berhasil dihapus.', 'success');
+                            Swal.fire('Berhasil!', 'Dokumen berhasil dihapus.', 'success');
                             table.draw();
                         },
                         error: function() {

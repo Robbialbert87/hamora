@@ -1,91 +1,107 @@
 @extends('layouts.app')
 
 @section('title', 'Users - HAMORA')
-@section('page-title', 'Users')
 
 @section('content')
-<section class="content-grid" style="grid-template-columns: 1fr;">
-    <div class="glass-card table-card" style="grid-column: span 1;">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title">Daftar Users</h2>
-                <p class="card-subtitle">Kelola pengguna sistem</p>
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="float-end">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item active">Users</li>
+                </ol>
             </div>
-            <div class="card-header-actions">
-                <a href="{{ route('users.create') }}" class="btn-emerald btn-sm">
-                    <i class="fas fa-plus"></i> Tambah User
-                </a>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table class="data-table" id="users-table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>NIP</th>
-                        <th>Bidang</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($users ?? [] as $user)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>
-                            <div class="table-user">
-                                <div class="table-avatar" style="background: linear-gradient(135deg, var(--emerald-light), var(--emerald));">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                </div>
-                                <div class="table-user-info">
-                                    <span class="table-user-name">{{ $user->name }}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{ $user->nip ?? '-' }}</td>
-                        <td>{{ $user->bidang->nama ?? '-' }}</td>
-                        <td>
-                            @foreach($user->roles as $role)
-                            <span class="badge" style="background: rgba(52, 211, 153, 0.15); color: var(--emerald-light); padding: 4px 10px; border-radius: 20px; font-size: 12px;">
-                                {{ ucfirst($role->name) }}
-                            </span>
-                            @endforeach
-                        </td>
-                        <td>
-                            @if($user->is_active)
-                            <span class="status-badge completed">Aktif</span>
-                            @else
-                            <span class="status-badge pending">Nonaktif</span>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn-outline-glass btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                @if($user->id !== auth()->id())
-                                <button class="btn-outline-glass btn-sm btn-delete-user"
-                                        data-url="{{ route('users.destroy', $user->id) }}"
-                                        data-name="{{ $user->name }}">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8" class="text-center text-muted">Belum ada user</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <h4 class="page-title">Users</h4>
         </div>
     </div>
-</section>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="card-title mb-0">Daftar Users</h4>
+                        <p class="text-muted mb-0">Kelola pengguna sistem</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm">
+                            <i class="ti ti-plus me-1"></i> Tambah User
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="users-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>NIP</th>
+                                <th>Bidang</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($users ?? [] as $user)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-soft-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; min-width: 36px;">
+                                            <span class="fw-bold text-primary">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                        </div>
+                                        <span class="fw-medium">{{ $user->name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ $user->nip ?? '-' }}</td>
+                                <td>{{ $user->bidang->nama ?? '-' }}</td>
+                                <td>
+                                    @foreach($user->roles as $role)
+                                    <span class="badge bg-soft-primary text-primary">
+                                        {{ ucfirst($role->name) }}
+                                    </span>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @if($user->is_active)
+                                    <span class="badge bg-soft-success text-success">Aktif</span>
+                                    @else
+                                    <span class="badge bg-soft-warning text-warning">Nonaktif</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="ti ti-pencil me-1"></i> Edit
+                                        </a>
+                                        @if($user->id !== auth()->id())
+                                        <button class="btn btn-outline-danger btn-sm btn-delete-user"
+                                                data-url="{{ route('users.destroy', $user->id) }}"
+                                                data-name="{{ $user->name }}">
+                                            <i class="ti ti-trash me-1"></i> Hapus
+                                        </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">Belum ada user</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -108,7 +124,7 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#6b7280',
+                cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Ya, hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
