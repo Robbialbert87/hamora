@@ -9,10 +9,50 @@ use Illuminate\Http\UploadedFile;
 
 class DocumentService
 {
-    public function uploadPdf(UploadedFile $file, int $tahun): string
+    public function uploadPdf(UploadedFile $file, int|string $tahun): string
     {
-        $path = "documents/{$tahun}";
-        return $file->store($path, 'public');
+        $tahun = (string) ($tahun ?: date('Y'));
+        $filename = time() . '_' . bin2hex(random_bytes(8)) . '.' . $file->getClientOriginalExtension();
+        $path = "documents/{$tahun}/{$filename}";
+
+        if (!$file->isValid()) {
+            $errors = [
+                UPLOAD_ERR_INI_SIZE   => 'File melebihi ukuran maksimum upload server.',
+                UPLOAD_ERR_FORM_SIZE  => 'File melebihi ukuran maksimum form.',
+                UPLOAD_ERR_PARTIAL    => 'File hanya terupload sebagian.',
+                UPLOAD_ERR_NO_FILE    => 'Tidak ada file yang diupload.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Server kekurangan folder temporary.',
+                UPLOAD_ERR_CANT_WRITE => 'Server gagal menulis file ke disk.',
+                UPLOAD_ERR_EXTENSION  => 'Ekspensi PHP menghentikan upload file.',
+            ];
+            $code = $file->getError();
+            $msg = $errors[$code] ?? 'Upload file gagal (kode error: ' . $code . ').';
+            throw new \RuntimeException($msg);
+        }
+
+        $pathname = $file->getPathname();
+        if (empty($pathname) || !is_file($pathname)) {
+            throw new \RuntimeException('File upload tidak valid atau sudah tidak tersedia. Silakan pilih ulang file.');
+        }
+
+        $stream = fopen($pathname, 'r');
+        if (!$stream) {
+            throw new \RuntimeException('Gagal membaca file upload. Silakan coba lagi.');
+        }
+
+        $contents = stream_get_contents($stream);
+        fclose($stream);
+
+        if (strlen($contents) === 0) {
+            throw new \RuntimeException('File upload kosong. Silakan pilih ulang file.');
+        }
+
+        $success = Storage::disk('public')->put($path, $contents);
+        if (!$success) {
+            throw new \RuntimeException('Gagal menyimpan file ke server. Silakan coba lagi.');
+        }
+
+        return $path;
     }
 
     public function createDocument(array $data, ?UploadedFile $file = null): Document

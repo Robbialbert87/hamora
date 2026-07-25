@@ -187,7 +187,7 @@ class DocumentController extends Controller
         }
 
         $rules = [
-            'nama_dokumen' => 'required|max:255',
+            'nama_dokumen' => 'required',
             'tahun' => 'required|integer|min:2000|max:2099',
             'bidang_id' => 'required|exists:bidang,id',
             'kategori_id' => 'required|exists:kategori,id',
@@ -222,27 +222,31 @@ class DocumentController extends Controller
         $validated = $request->validate($rules);
         $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? null;
 
-        if (in_array($jenisUpload, ['revisi', 'update'])) {
-            $parentDocument = Document::findOrFail($validated['parent_document_id']);
+        try {
+            if (in_array($jenisUpload, ['revisi', 'update'])) {
+                $parentDocument = Document::findOrFail($validated['parent_document_id']);
 
-            if ($validated['nomor_dokumen'] && $validated['nomor_dokumen'] === $parentDocument->nomor_dokumen && $validated['tanggal_terbit'] === $parentDocument->tanggal_terbit?->format('Y-m-d')) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'tanggal_terbit' => 'Tanggal terbit harus berbeda dari dokumen asli jika nomor dokumen sama.',
-                ]);
-            }
+                if ($validated['nomor_dokumen'] && $validated['nomor_dokumen'] === $parentDocument->nomor_dokumen && $validated['tanggal_terbit'] === $parentDocument->tanggal_terbit?->format('Y-m-d')) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'tanggal_terbit' => 'Tanggal terbit harus berbeda dari dokumen asli jika nomor dokumen sama.',
+                    ]);
+                }
 
-            if (in_array($jenisUpload, ['update', 'revisi'])) {
-                $validated['bidang_id'] = $validated['bidang_id'] ?? $parentDocument->bidang_id;
-                $validated['kategori_id'] = $validated['kategori_id'] ?? $parentDocument->kategori_id;
-                $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? $parentDocument->tanggal_berlaku;
-            }
+                if (in_array($jenisUpload, ['update', 'revisi'])) {
+                    $validated['bidang_id'] = $validated['bidang_id'] ?? $parentDocument->bidang_id;
+                    $validated['kategori_id'] = $validated['kategori_id'] ?? $parentDocument->kategori_id;
+                    $validated['tanggal_berlaku'] = $validated['tanggal_berlaku'] ?? $parentDocument->tanggal_berlaku;
+                }
 
-            $parentStatus = $jenisUpload === 'update' ? 'diubah' : 'direvisi';
-            if ($request->hasFile('file_pdf')) {
-                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'), $parentStatus);
+                $parentStatus = $jenisUpload === 'update' ? 'diubah' : 'direvisi';
+                if ($request->hasFile('file_pdf')) {
+                    $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'), $parentStatus);
+                }
+            } elseif ($request->hasFile('file_pdf')) {
+                $this->documentService->createDocument($validated, $request->file('file_pdf'));
             }
-        } elseif ($request->hasFile('file_pdf')) {
-            $this->documentService->createDocument($validated, $request->file('file_pdf'));
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Gagal upload dokumen: ' . $e->getMessage());
         }
 
         $messages = [
@@ -275,7 +279,7 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'nomor_dokumen' => 'required',
-            'nama_dokumen' => 'required|max:255',
+            'nama_dokumen' => 'required',
             'tahun' => 'required|integer|min:2000|max:2099',
             'bidang_id' => 'required|exists:bidang,id',
             'kategori_id' => 'required|exists:kategori,id',
@@ -286,16 +290,20 @@ class DocumentController extends Controller
             'status' => 'required|in:draft,aktif,direvisi,kadaluarsa,dicabut,diubah',
         ]);
 
-        if ($request->hasFile('file_pdf')) {
-            if ($document->file_pdf && Storage::disk('public')->exists($document->file_pdf)) {
-                Storage::disk('public')->delete($document->file_pdf);
+        try {
+            if ($request->hasFile('file_pdf')) {
+                if ($document->file_pdf && Storage::disk('public')->exists($document->file_pdf)) {
+                    Storage::disk('public')->delete($document->file_pdf);
+                }
+                $validated['file_pdf'] = $this->documentService->uploadPdf($request->file('file_pdf'), $validated['tahun']);
             }
-            $validated['file_pdf'] = $this->documentService->uploadPdf($request->file('file_pdf'), $validated['tahun']);
+
+            $document->update($validated);
+
+            ActivityLog::log('edit', "Edit dokumen: {$document->nama_dokumen}", ['document_id' => $document->id]);
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Gagal update dokumen: ' . $e->getMessage());
         }
-
-        $document->update($validated);
-
-        ActivityLog::log('edit', "Edit dokumen: {$document->nama_dokumen}", ['document_id' => $document->id]);
 
         return redirect()->route('documents.index')->with('success', 'Dokumen berhasil diperbarui.');
     }

@@ -29,68 +29,64 @@
 
             {{-- Riwayat Dokumen --}}
             @if(count($revisionHistory) > 0)
-            <div class="mb-4">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="ti ti-history text-primary me-2"></i>
-                    <h6 class="fw-semibold mb-0">Riwayat Dokumen</h6>
-                    <span class="badge bg-light text-dark ms-2">{{ count($revisionHistory) }} versi</span>
+            <div class="mb-0">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-title mb-0">Riwayat Revisi</h6>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ count($revisionHistory) }} versi</span>
                 </div>
 
-                <div class="timeline-wrapper">
-                    @foreach($revisionHistory as $i => $doc)
+                <div class="revision-timeline">
+                    @foreach($revisionHistory as $idx => $doc)
                     @php
                         $isLatest = $doc->id === $latestDocId;
                         $isCurrent = $doc->id === $document->id;
-                        $isLast = $loop->last;
+                        $isLast = $idx === count($revisionHistory) - 1;
+                        $statusIcons = [
+                            'aktif'     => 'ti ti-circle-check',
+                            'draft'     => 'ti ti-pencil',
+                            'direvisi'  => 'ti ti-git-branch',
+                            'diubah'    => 'ti ti-refresh',
+                            'kadaluarsa'=> 'ti ti-clock-off',
+                            'dicabut'   => 'ti ti-circle-x',
+                        ];
+                        $icon = $statusIcons[$doc->status] ?? 'ti ti-file';
                     @endphp
-                    <div class="timeline-item {{ $isCurrent ? 'timeline-active' : '' }}">
-                        <div class="timeline-dot {{ $isCurrent ? 'bg-primary' : ($isLatest ? 'bg-success' : ($doc->status === 'dicabut' ? 'bg-secondary' : 'bg-light')) }}">
-                            @if($doc->status === 'dicabut')
-                                <i class="ti ti-archive font-10"></i>
-                            @elseif($isCurrent)
-                                <i class="ti ti-eye font-10"></i>
-                            @elseif($isLatest)
-                                <i class="ti ti-check font-10"></i>
-                            @else
-                                <i class="ti ti-file font-10"></i>
+                    <a href="{{ route('documents.show', $doc->id) }}" class="revision-item {{ $isCurrent ? 'current' : '' }} {{ $isLast ? 'is-last' : '' }}">
+                        <div class="revision-node">
+                            <div class="revision-icon {{ $isCurrent ? 'active' : ($doc->status === 'aktif' ? 'success' : ($doc->status === 'dicabut' ? 'danger' : 'default')) }}">
+                                <i class="{{ $icon }}"></i>
+                            </div>
+                            @if(!$isLast)
+                            <div class="revision-line {{ $doc->status === 'aktif' ? 'line-success' : '' }}"></div>
                             @endif
                         </div>
-                        @if(!$isLast)
-                        <div class="timeline-line {{ $isCurrent ? 'line-active' : '' }}"></div>
-                        @endif
-                        <div class="timeline-content">
-                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                                <a href="{{ route('documents.show', $doc->id) }}" class="fw-semibold {{ $isCurrent ? 'text-primary' : ($isLatest ? 'text-dark' : 'text-muted') }} text-decoration-none">
-                                    {{ $doc->nomor_dokumen }}
-                                </a>
-                                @if($doc->status === 'dicabut')
-                                    <span class="badge bg-secondary-subtle text-secondary">Dicabut</span>
-                                @elseif($isCurrent)
-                                    <span class="badge bg-primary-subtle text-primary">Lihat Ini</span>
+                        <div class="revision-content">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="fw-semibold {{ $isCurrent ? 'text-primary' : 'text-dark' }}" style="font-size: 13px;">v{{ $doc->versi ?? 1 }}</span>
+                                <span class="text-muted" style="font-size: 12px;">{{ $doc->nomor_dokumen }}</span>
+                                @if($isCurrent)
+                                    <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 10px;">Sedang Dilihat</span>
                                 @elseif($isLatest)
-                                    <span class="badge bg-success-subtle text-success">Aktif</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 10px;">Aktif</span>
+                                @elseif($doc->status === 'dicabut')
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary" style="font-size: 10px;">Dicabut</span>
                                 @endif
                             </div>
-                            <p class="mb-0 {{ $isCurrent ? 'text-primary' : 'text-muted' }}" style="font-size: 12.5px;">{{ $doc->nama_dokumen }}</p>
-                            <div class="d-flex align-items-center gap-2 mt-1">
-                                <small class="text-muted">v{{ $doc->versi ?? '1' }}</small>
-                                @if($doc->updated_at)
-                                <small class="text-muted">&middot;</small>
-                                <small class="text-muted">{{ $doc->updated_at->format('d M Y') }}</small>
-                                @endif
+                            <p class="mb-1 text-muted" style="font-size: 12px;">{{ $doc->nama_dokumen }}</p>
+                            <div class="d-flex align-items-center gap-3" style="font-size: 11.5px;">
                                 @if($doc->creator)
-                                <small class="text-muted">&middot;</small>
-                                <small class="text-muted">{{ $doc->creator->name }}</small>
+                                <span class="text-muted"><i class="ti ti-user" style="font-size: 12px;"></i> {{ $doc->creator->name }}</span>
                                 @endif
+                                <span class="text-muted"><i class="ti ti-calendar" style="font-size: 12px;"></i> {{ $doc->updated_at ? $doc->updated_at->format('d M Y') : '-' }}</span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     @endforeach
                 </div>
             </div>
             @endif
 
-            <hr>
+            <hr class="my-4">
 
                 <div class="mb-3">
                     <label class="text-muted text-uppercase small d-block mb-1">Nomor Dokumen</label>

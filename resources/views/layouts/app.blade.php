@@ -271,8 +271,66 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"></div>
+
     <!-- App JS -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
+    <script>
+        (function() {
+            function showToast(type, message) {
+                var container = document.getElementById('toast-container');
+                if (!container || !message) return;
+
+                var icons = {
+                    success: 'ti ti-check',
+                    error: 'ti ti-x',
+                    warning: 'ti ti-alert-triangle',
+                    info: 'ti ti-info-circle'
+                };
+                var colors = {
+                    success: '#22c55e',
+                    error: '#dc2626',
+                    warning: '#eab308',
+                    info: '#0ea5e9'
+                };
+
+                var toast = document.createElement('div');
+                toast.className = 'hamora-toast';
+                toast.style.borderLeftColor = colors[type] || colors.info;
+                toast.innerHTML =
+                    '<div class="hamora-toast-icon" style="background:' + (colors[type] || colors.info) + '20; color:' + (colors[type] || colors.info) + '">' +
+                        '<i class="' + (icons[type] || icons.info) + '"></i>' +
+                    '</div>' +
+                    '<div class="hamora-toast-body">' + message + '</div>' +
+                    '<button class="hamora-toast-close" onclick="this.parentElement.remove()">&times;</button>';
+
+                container.appendChild(toast);
+
+                requestAnimationFrame(function() {
+                    toast.classList.add('show');
+                });
+
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                    setTimeout(function() { toast.remove(); }, 300);
+                }, 5000);
+            }
+
+            @if(session('success'))
+                showToast('success', {!! json_encode(session('success')) !!});
+            @endif
+            @if(session('error'))
+                showToast('error', {!! json_encode(session('error')) !!});
+            @endif
+            @if(session('warning'))
+                showToast('warning', {!! json_encode(session('warning')) !!});
+            @endif
+
+            window.showToast = showToast;
+        })();
+    </script>
 
     <!-- Fix DataTables header on sidebar toggle -->
     <script>
