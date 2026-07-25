@@ -162,7 +162,7 @@
                     <div class="upload-zone-preview d-none" id="uploadPreview">
                         <div class="upload-zone-file">
                             <div class="upload-zone-file-icon">
-                                <i class="ti ti-file-type-pdf"></i>
+                                <i class="ti ti-file-text"></i>
                             </div>
                             <div class="upload-zone-file-info">
                                 <span class="upload-zone-file-name" id="fileName"></span>

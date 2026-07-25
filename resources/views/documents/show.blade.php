@@ -46,7 +46,7 @@
                             'draft'     => 'ti ti-pencil',
                             'direvisi'  => 'ti ti-git-branch',
                             'diubah'    => 'ti ti-refresh',
-                            'kadaluarsa'=> 'ti ti-clock-off',
+                            'kadaluarsa'=> 'ti ti-clock',
                             'dicabut'   => 'ti ti-circle-x',
                         ];
                         $icon = $statusIcons[$doc->status] ?? 'ti ti-file';
