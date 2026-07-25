@@ -27,48 +27,70 @@
                 <h4 class="card-title mb-1">Detail Dokumen</h4>
                 <p class="text-muted mb-4">Informasi lengkap dokumen</p>
 
-                {{-- Riwayat Dokumen --}}
-                <div class="mb-4">
-                    <h6 class="fw-semibold mb-3">Riwayat Dokumen</h6>
-                    @forelse($revisionHistory as $i => $doc)
+            {{-- Riwayat Dokumen --}}
+            @if(count($revisionHistory) > 0)
+            <div class="mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="ti ti-history text-primary me-2"></i>
+                    <h6 class="fw-semibold mb-0">Riwayat Dokumen</h6>
+                    <span class="badge bg-light text-dark ms-2">{{ count($revisionHistory) }} versi</span>
+                </div>
+
+                <div class="timeline-wrapper">
+                    @foreach($revisionHistory as $i => $doc)
                     @php
                         $isLatest = $doc->id === $latestDocId;
                         $isCurrent = $doc->id === $document->id;
+                        $isLast = $loop->last;
                     @endphp
-                    <div class="d-flex gap-3 mb-3 {{ $isCurrent ? 'p-2 rounded bg-soft-primary' : '' }}">
-                        <div class="text-center" style="width: 24px;">
+                    <div class="timeline-item {{ $isCurrent ? 'timeline-active' : '' }}">
+                        <div class="timeline-dot {{ $isCurrent ? 'bg-primary' : ($isLatest ? 'bg-success' : ($doc->status === 'dicabut' ? 'bg-secondary' : 'bg-light')) }}">
                             @if($doc->status === 'dicabut')
-                                <i class="ti ti-archive text-muted"></i>
-                            @elseif($isLatest || $isCurrent)
-                                <i class="ti ti-check-circle text-primary"></i>
+                                <i class="ti ti-archive font-10"></i>
+                            @elseif($isCurrent)
+                                <i class="ti ti-eye font-10"></i>
+                            @elseif($isLatest)
+                                <i class="ti ti-check font-10"></i>
                             @else
-                                <i class="ti ti-file text-muted"></i>
+                                <i class="ti ti-file font-10"></i>
                             @endif
                         </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <a href="{{ route('documents.show', $doc->id) }}" class="fw-medium {{ $isCurrent ? 'text-primary' : ($isLatest ? 'text-primary' : 'text-dark') }}">
+                        @if(!$isLast)
+                        <div class="timeline-line {{ $isCurrent ? 'line-active' : '' }}"></div>
+                        @endif
+                        <div class="timeline-content">
+                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                <a href="{{ route('documents.show', $doc->id) }}" class="fw-semibold {{ $isCurrent ? 'text-primary' : ($isLatest ? 'text-dark' : 'text-muted') }} text-decoration-none">
                                     {{ $doc->nomor_dokumen }}
                                 </a>
                                 @if($doc->status === 'dicabut')
-                                    <span class="badge bg-secondary">Dicabut</span>
+                                    <span class="badge bg-secondary-subtle text-secondary">Dicabut</span>
                                 @elseif($isCurrent)
-                                    <span class="badge bg-primary">v{{ $doc->versi ?? '1' }}</span>
+                                    <span class="badge bg-primary-subtle text-primary">Lihat Ini</span>
                                 @elseif($isLatest)
-                                    <span class="badge bg-primary">Saat ini v{{ $doc->versi ?? '1' }}</span>
-                                @else
-                                    <span class="badge bg-light text-dark">Lama v{{ $doc->versi ?? '1' }}</span>
+                                    <span class="badge bg-success-subtle text-success">Aktif</span>
                                 @endif
                             </div>
-                            <small class="text-muted">{{ $doc->nama_dokumen }}</small>
+                            <p class="mb-0 {{ $isCurrent ? 'text-primary' : 'text-muted' }}" style="font-size: 12.5px;">{{ $doc->nama_dokumen }}</p>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <small class="text-muted">v{{ $doc->versi ?? '1' }}</small>
+                                @if($doc->updated_at)
+                                <small class="text-muted">&middot;</small>
+                                <small class="text-muted">{{ $doc->updated_at->format('d M Y') }}</small>
+                                @endif
+                                @if($doc->creator)
+                                <small class="text-muted">&middot;</small>
+                                <small class="text-muted">{{ $doc->creator->name }}</small>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                    @empty
-                    <small class="text-muted">Tidak ada riwayat revisi.</small>
-                    @endforelse
+                    @endforeach
                 </div>
+            </div>
+            @endif
 
-                <hr>
+            <hr>
 
                 <div class="mb-3">
                     <label class="text-muted text-uppercase small d-block mb-1">Nomor Dokumen</label>

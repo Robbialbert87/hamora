@@ -405,6 +405,74 @@ table.dataTable thead th {
 }
 
 /* ==========================================
+   DOCUMENT REVISION TIMELINE
+   ========================================== */
+
+.timeline-wrapper {
+    position: relative;
+    padding-left: 0;
+}
+
+.timeline-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 16px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-dot {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 2;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-dot.bg-light {
+    background: #f1f5f9 !important;
+    color: #94a3b8;
+    box-shadow: none;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 13px;
+    top: 28px;
+    bottom: 0;
+    width: 2px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+.timeline-line.line-active {
+    background: linear-gradient(to bottom, #556ee5, #e2e8f0);
+}
+
+.timeline-content {
+    flex: 1;
+    min-width: 0;
+    padding-top: 3px;
+}
+
+.timeline-active .timeline-content {
+    background: rgba(85, 110, 229, 0.04);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin: -4px -10px;
+}
+
+/* ==========================================
    MOBILE SIDEBAR OVERLAY
    ========================================== */
 
