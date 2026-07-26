@@ -1340,3 +1340,27 @@ table.dataTable thead th {
         max-width: calc(100vw - 24px);
     }
 }
+
+/* Mobile Responsive */
+@media (max-width: 767.98px) {
+    .btn-upload-text { display: none; }
+
+    .page-title-box .breadcrumb { font-size: 12px; }
+
+    .card-body { overflow-x: auto; }
+
+    #documents-table {
+        min-width: 580px;
+    }
+
+    #documents-table td,
+    #documents-table th {
+        white-space: nowrap;
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .dataTables_info { font-size: 11px; }
+    .dataTables_length select { font-size: 12px; }
+    .dataTables_length label { font-size: 12px; }
+}

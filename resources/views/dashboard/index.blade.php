@@ -100,14 +100,12 @@
             <div class="card-header">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h4 class="card-title">Dokumen per Tahun</h4>
+                        <h4 class="card-title mb-0">Dokumen &amp; MOU per Tahun</h4>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div style="height: 300px;">
-                    <canvas id="chartTahun"></canvas>
-                </div>
+                <div id="chartOverview" style="height: 300px;"></div>
             </div>
         </div>
     </div>
@@ -152,6 +150,107 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status MOU Row -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card" style="border-left: 3px solid #22c55e;">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex justify-content-center align-items-center thumb-sm bg-soft-success rounded-circle me-3">
+                                <i class="ti ti-check-circle font-20 text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">{{ $mouAktif ?? 0 }}</h5>
+                                <small class="text-muted">Aktif</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" style="border-left: 3px solid #f97316;">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex justify-content-center align-items-center thumb-sm rounded-circle me-3" style="background: rgba(249,115,22,0.15);">
+                                <i class="ti ti-clock font-20" style="color: #f97316;"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">{{ $mouMendekati ?? 0 }}</h5>
+                                <small class="text-muted">Mendekati Kadarluarsa</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" style="border-left: 3px solid #dc2626;">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex justify-content-center align-items-center thumb-sm bg-soft-danger rounded-circle me-3">
+                                <i class="ti ti-alert-triangle font-20 text-danger"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">{{ $mouKadaluarsa ?? 0 }}</h5>
+                                <small class="text-muted">Kadaluarsa</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="card-title mb-0">MOU Mendekati Kadarluarsa (12 Bulan ke Depan)</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chartMouExpiry" style="height: 280px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="card-title mb-0">Persentase Mendekati Kadarluarsa</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chartMouRadial" style="height: 200px;"></div>
+                <div class="mt-3">
+                    <h6 class="text-muted mb-2" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px;">MOU Terdekat Kadarluarsa</h6>
+                    @forelse($mouTerdekat as $m)
+                        @php
+                            $sisaHari = now()->diffInDays($m->akhir_perjanjian, false);
+                            $sisaHari = (int) $sisaHari;
+                            $badgeColor = $sisaHari <= 7 ? 'danger' : ($sisaHari <= 14 ? 'warning' : 'info');
+                        @endphp
+                        <div class="d-flex justify-content-between align-items-center {{ !$loop->last ? 'mb-2 pb-2 border-bottom' : '' }}">
+                            <div class="flex-grow-1 me-2">
+                                <div class="fw-medium" style="font-size: 13px;">{{ Str::limit($m->judul, 35) }}</div>
+                                <small class="text-muted" style="font-size: 11px;">{{ $m->nomor }} &middot; s/d {{ $m->akhir_perjanjian->format('d/m/Y') }}</small>
+                            </div>
+                            <span class="badge bg-{{ $badgeColor }}" style="font-size: 10px; padding: 3px 7px; white-space: nowrap;">{{ $sisaHari }} hari</span>
+                        </div>
+                    @empty
+                        <div class="text-center py-3">
+                            <i class="ti ti-check-circle text-success" style="font-size: 24px;"></i>
+                            <p class="text-muted mt-1 mb-0" style="font-size: 12px;">Tidak ada MOU mendekati kadarluarsa</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -366,48 +465,176 @@
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var colors = ['#556ee5','#4aa0d5','#22c55e','#eab308','#dc2626','#8b5cf6','#ec4899','#f97316'];
 
-        // Chart Tahun
-        var ctxTahun = document.getElementById('chartTahun');
-        if (ctxTahun) {
-            new Chart(ctxTahun.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: @json($chartTahunLabels ?? []),
-                    datasets: [{
-                        label: 'Jumlah Dokumen',
-                        data: @json($chartTahunData ?? []),
-                        backgroundColor: 'rgba(85, 110, 229, 0.6)',
-                        borderColor: 'rgba(85, 110, 229, 1)',
-                        borderWidth: 2,
-                        borderRadius: 8,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#6c757d' },
-                            grid: { color: '#dee2e6' }
-                        },
-                        x: {
-                            ticks: { color: '#6c757d' },
-                            grid: { display: false }
+        // Overview Area Chart (ApexCharts)
+        var tahunLabels = @json($semuaTahun ?? []);
+        var dokumenData = @json($chartDokumenData ?? []);
+        var mouData = @json($chartMouData ?? []);
+
+        var overviewOptions = {
+            series: [
+                { name: 'Dokumen', data: dokumenData },
+                { name: 'MOU', data: mouData }
+            ],
+            chart: {
+                type: 'area',
+                height: 300,
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                fontFamily: 'Inter, sans-serif'
+            },
+            colors: ['#556ee5', '#22c55e'],
+            stroke: {
+                curve: 'smooth',
+                width: [2, 2],
+                dashArray: [0, 0]
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.4,
+                    opacityTo: 0.05,
+                    stops: [0, 90, 100]
+                }
+            },
+            markers: {
+                size: [0, 0],
+                hover: { sizeOffset: 3 }
+            },
+            dataLabels: { enabled: false },
+            grid: {
+                borderColor: '#e9ecef',
+                strokeDashArray: 3,
+                padding: { left: 8, right: 8 }
+            },
+            xaxis: {
+                categories: tahunLabels,
+                axisBorder: { show: true, color: '#e9ecef' },
+                axisTicks: { show: true, color: '#e9ecef' },
+                labels: { style: { colors: '#6c757d', fontSize: '12px' } }
+            },
+            yaxis: {
+                labels: { style: { colors: '#6c757d', fontSize: '12px' } },
+                min: 0
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                fontSize: '13px',
+                markers: { radius: 2 },
+                itemMargin: { horizontal: 12 }
+            },
+            tooltip: {
+                y: { formatter: function(val) { return val + ' item'; } }
+            }
+        };
+
+        var overviewChart = new ApexCharts(document.querySelector('#chartOverview'), overviewOptions);
+        overviewChart.render();
+
+        // MOU Expiry Area Chart (ApexCharts)
+        var bulanLabels = @json($bulanLabel ?? []);
+        var bulanDataArr = @json($bulanData ?? []);
+
+        var mouExpiryOptions = {
+            series: [{ name: 'MOU Kadarluarsa', data: bulanDataArr }],
+            chart: {
+                type: 'area',
+                height: 280,
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                fontFamily: 'Inter, sans-serif'
+            },
+            colors: ['#f97316'],
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.45,
+                    opacityTo: 0.05,
+                    stops: [0, 90, 100],
+                    colorStops: [
+                        { offset: 0, color: '#f97316', opacity: 0.45 },
+                        { offset: 100, color: '#dc2626', opacity: 0.05 }
+                    ]
+                }
+            },
+            markers: {
+                size: 0,
+                hover: { sizeOffset: 4 }
+            },
+            dataLabels: { enabled: false },
+            grid: {
+                borderColor: '#e9ecef',
+                strokeDashArray: 3,
+                padding: { left: 8, right: 8 }
+            },
+            xaxis: {
+                categories: bulanLabels,
+                axisBorder: { show: true, color: '#e9ecef' },
+                axisTicks: { show: true, color: '#e9ecef' },
+                labels: { style: { colors: '#6c757d', fontSize: '11px' }, rotate: -45, rotateAlways: false }
+            },
+            yaxis: {
+                labels: { style: { colors: '#6c757d', fontSize: '12px' } },
+                min: 0,
+                forceNiceScale: true
+            },
+            legend: { show: false },
+            tooltip: {
+                y: { formatter: function(val) { return val + ' MOU'; } }
+            }
+        };
+
+        var mouExpiryChart = new ApexCharts(document.querySelector('#chartMouExpiry'), mouExpiryOptions);
+        mouExpiryChart.render();
+
+        // MOU Radial Bar (ApexCharts)
+        var pctMendekati = {{ $pctMendekati ?? 0 }};
+
+        var radialOptions = {
+            series: [pctMendekati],
+            chart: {
+                type: 'radialBar',
+                height: 200,
+                fontFamily: 'Inter, sans-serif'
+            },
+            colors: ['#f97316'],
+            plotOptions: {
+                radialBar: {
+                    hollow: { size: '65%' },
+                    dataLabels: {
+                        name: { show: false },
+                        value: {
+                            fontSize: '22px',
+                            fontWeight: 700,
+                            color: '#343a40',
+                            formatter: function(val) { return val + '%'; }
                         }
+                    },
+                    track: {
+                        background: '#f1f3f4',
+                        strokeWidth: '100%'
                     }
                 }
-            });
-        }
+            },
+            stroke: { lineCap: 'round' },
+            labels: ['Mendekati Kadarluarsa']
+        };
 
-        // Chart Bidang
+        var radialChart = new ApexCharts(document.querySelector('#chartMouRadial'), radialOptions);
+        radialChart.render();
+
+        // Chart Bidang (Chart.js Doughnut)
         var ctxBidang = document.getElementById('chartBidang');
         if (ctxBidang) {
             new Chart(ctxBidang.getContext('2d'), {
@@ -425,14 +652,12 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '60%',
-                    plugins: {
-                        legend: { display: false }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // Chart Kategori
+        // Chart Kategori (Chart.js Doughnut)
         var ctxKategori = document.getElementById('chartKategori');
         if (ctxKategori) {
             new Chart(ctxKategori.getContext('2d'), {
@@ -450,9 +675,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '60%',
-                    plugins: {
-                        legend: { display: false }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         }

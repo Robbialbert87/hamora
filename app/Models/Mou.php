@@ -4,6 +4,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Bidang;
 use App\Models\Kategori;
 
@@ -15,7 +17,7 @@ class Mou extends Model
 
     protected $fillable = [
         'pihak', 'judul', 'bidang_id', 'kategori_id', 'nomor', 'mulai_perjanjian', 'masa_berlaku',
-        'akhir_perjanjian', 'status', 'file_pdf', 'uploaded_by'
+        'akhir_perjanjian', 'status', 'versi', 'parent_mou_id', 'file_pdf', 'uploaded_by'
     ];
 
     protected function casts(): array
@@ -26,6 +28,7 @@ class Mou extends Model
             'masa_berlaku' => 'integer',
             'bidang_id' => 'integer',
             'kategori_id' => 'integer',
+            'versi' => 'integer',
         ];
     }
 
@@ -42,6 +45,50 @@ class Mou extends Model
     public function kategori(): BelongsTo
     {
         return $this->belongsTo(Kategori::class);
+    }
+
+    public function parentMou(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_mou_id');
+    }
+
+    public function versions(): HasMany
+    {
+        return $this->hasMany(MouVersion::class)->orderBy('versi', 'asc');
+    }
+
+    public function latestVersion(): ?MouVersion
+    {
+        return $this->versions()->latest('versi')->first();
+    }
+
+    public function getIsLatestAttribute(): bool
+    {
+        $latest = $this->parentMou ? $this->parentMou->latestRenewal() : $this;
+        return $latest->id === $this->id;
+    }
+
+    public function latestRenewal(): self
+    {
+        $child = self::where('parent_mou_id', $this->id)->latest('versi')->first();
+        return $child ? $child->latestRenewal() : $this;
+    }
+
+    public function revisionHistory(): array
+    {
+        $root = $this;
+        while ($root->parentMou) {
+            $root = $root->parentMou;
+        }
+
+        $history = [];
+        $current = $root;
+        while ($current) {
+            $history[] = $current;
+            $current = self::where('parent_mou_id', $current->id)->orderBy('versi', 'asc')->first();
+        }
+
+        return $history;
     }
 
     public function scopeAktif($query)

@@ -5,6 +5,7 @@ use App\Models\Mou;
 use App\Models\Bidang;
 use App\Models\Kategori;
 use App\Models\ActivityLog;
+use App\Services\MouService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,13 @@ use setasign\Fpdi\Fpdi;
 
 class MouController extends Controller
 {
+    protected MouService $mouService;
+
+    public function __construct(MouService $mouService)
+    {
+        $this->mouService = $mouService;
+    }
+
     public function index()
     {
         return view('mou.index');
@@ -36,6 +44,12 @@ class MouController extends Controller
 
         return DataTables::of($mou)
             ->addIndexColumn()
+            ->addColumn('versi_badge', function ($m) {
+                if ($m->versi > 1) {
+                    return '<span class="badge bg-info">Perpanjangan #' . ($m->versi - 1) . '</span>';
+                }
+                return '<span class="badge bg-secondary">Perjanjian Awal</span>';
+            })
             ->addColumn('mulai_formatted', function ($m) {
                 return $m->mulai_perjanjian ? $m->mulai_perjanjian->format('d/m/Y') : '-';
             })
@@ -73,7 +87,7 @@ class MouController extends Controller
                 $btn .= '</div>';
                 return $btn;
             })
-            ->rawColumns(['status_badge', 'action'])
+            ->rawColumns(['versi_badge', 'status_badge', 'action'])
             ->make(true);
     }
 
@@ -99,15 +113,72 @@ class MouController extends Controller
             'file_pdf' => 'required|file|mimes:pdf|max:20480',
         ]);
 
-        $file = $request->file('file_pdf');
-        $fileName = time() . '_' . $file->getClientOriginalName();
+        $mulai = \Carbon\Carbon::parse($request->mulai_perjanjian);
 
-        if (!Storage::disk('public')->exists('mou')) {
-            Storage::disk('public')->makeDirectory('mou');
+        if ($request->filled('masa_berlaku')) {
+            $akhir = $mulai->copy()->addDays((int) $request->masa_berlaku);
+        } elseif ($request->filled('akhir_perjanjian')) {
+            $akhir = \Carbon\Carbon::parse($request->akhir_perjanjian);
+            $request->merge(['masa_berlaku' => (int) $mulai->diffInDays($akhir)]);
+        } else {
+            return back()->withErrors(['akhir_perjanjian' => 'Isi masa berlaku atau akhir perjanjian'])->withInput();
         }
 
-        $filePath = 'mou/' . $fileName;
-        Storage::disk('public')->put($filePath, file_get_contents($file->getPathname()));
+        $data = $request->only(['pihak', 'judul', 'bidang_id', 'kategori_id', 'nomor', 'mulai_perjanjian', 'masa_berlaku']);
+        $data['akhir_perjanjian'] = $akhir;
+        $data['status'] = $akhir->isPast() ? 'kadaluarsa' : $request->status;
+
+        $mou = $this->mouService->createMou($data, $request->file('file_pdf'));
+
+        ActivityLog::log('upload_mou', "Upload MOU: {$mou->judul}");
+
+        return redirect()->route('mou.index')->with('success', 'MOU berhasil diupload.');
+    }
+
+    public function selectRenew()
+    {
+        $mouList = Mou::with(['bidang', 'kategori'])
+            ->whereIn('status', ['aktif', 'kadaluarsa'])
+            ->orderBy('akhir_perjanjian', 'desc')
+            ->get();
+
+        $bidang = \App\Models\Bidang::orderBy('nama')->get();
+        $kategori = \App\Models\Kategori::orderBy('nama')->get();
+
+        return view('mou.select-renew', compact('mouList', 'bidang', 'kategori'));
+    }
+
+    public function show(Mou $mou)
+    {
+        $revisionHistory = $mou->revisionHistory();
+        $latestMouId = !empty($revisionHistory) ? last($revisionHistory)->id : $mou->id;
+        return view('mou.show', compact('mou', 'revisionHistory', 'latestMouId'));
+    }
+
+    public function renew(Mou $mou)
+    {
+        $bidang = Bidang::orderBy('nama')->get();
+        $kategori = Kategori::orderBy('nama')->get();
+        return view('mou.renew', compact('mou', 'bidang', 'kategori'));
+    }
+
+    public function storeRenewal(Request $request)
+    {
+        $request->validate([
+            'parent_mou_id' => 'required|exists:mou,id',
+            'pihak' => 'required|string|max:255',
+            'judul' => 'required|string|max:255',
+            'bidang_id' => 'nullable|exists:bidang,id',
+            'kategori_id' => 'nullable|exists:kategori,id',
+            'nomor' => 'required|string|max:255|unique:mou,nomor',
+            'mulai_perjanjian' => 'required|date',
+            'masa_berlaku' => 'nullable|integer|min:1|max:3650',
+            'akhir_perjanjian' => 'nullable|date|after_or_equal:mulai_perjanjian',
+            'status' => 'required|in:aktif,kadaluarsa,dicabut',
+            'file_pdf' => 'required|file|mimes:pdf|max:20480',
+        ]);
+
+        $oldMou = Mou::findOrFail($request->parent_mou_id);
 
         $mulai = \Carbon\Carbon::parse($request->mulai_perjanjian);
 
@@ -120,28 +191,15 @@ class MouController extends Controller
             return back()->withErrors(['akhir_perjanjian' => 'Isi masa berlaku atau akhir perjanjian'])->withInput();
         }
 
-        $mou = Mou::create([
-            'pihak' => $request->pihak,
-            'judul' => $request->judul,
-            'bidang_id' => $request->bidang_id,
-            'kategori_id' => $request->kategori_id,
-            'nomor' => $request->nomor,
-            'mulai_perjanjian' => $request->mulai_perjanjian,
-            'masa_berlaku' => $request->masa_berlaku,
-            'akhir_perjanjian' => $akhir,
-            'status' => $akhir->isPast() ? 'kadaluarsa' : $request->status,
-            'file_pdf' => $filePath,
-            'uploaded_by' => auth()->id(),
-        ]);
+        $data = $request->only(['pihak', 'judul', 'bidang_id', 'kategori_id', 'nomor', 'mulai_perjanjian', 'masa_berlaku']);
+        $data['akhir_perjanjian'] = $akhir;
+        $data['status'] = $akhir->isPast() ? 'kadaluarsa' : $request->status;
 
-        ActivityLog::log('upload_mou', "Upload MOU: {$mou->judul}");
+        $newMou = $this->mouService->renewMou($oldMou, $data, $request->file('file_pdf'));
 
-        return redirect()->route('mou.index')->with('success', 'MOU berhasil diupload.');
-    }
+        ActivityLog::log('renew_mou', "Perpanjang MOU: {$oldMou->judul} → Perpanjangan #" . ($newMou->versi - 1));
 
-    public function show(Mou $mou)
-    {
-        return view('mou.show', compact('mou'));
+        return redirect()->route('mou.show', $newMou->id)->with('success', 'MOU berhasil diperpanjang.');
     }
 
     public function edit(Mou $mou)
@@ -216,7 +274,7 @@ class MouController extends Controller
 
         ActivityLog::log('update_mou', "Update MOU: {$mou->judul}");
 
-        return redirect()->route('mou.index')->with('success', 'MOU berhasil diupdate.');
+        return redirect()->route('mou.show', $mou->id)->with('success', 'MOU berhasil diupdate.');
     }
 
     public function destroy(Mou $mou)

@@ -23,66 +23,151 @@
     <div class="col-lg-5">
         <div class="card">
             <div class="card-body">
-                <div class="mb-3">
-                    <h4 class="card-title mb-0">Detail MOU</h4>
-                    <p class="text-muted mb-0">Informasi lengkap MOU / perjanjian kerja sama</p>
+                <h4 class="card-title mb-1">Detail MOU</h4>
+                <p class="text-muted mb-4">Informasi lengkap MOU / perjanjian kerja sama</p>
+
+            {{-- Riwayat Perpanjangan --}}
+            @if(count($revisionHistory) > 0)
+            <div class="mb-0">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-title mb-0">Riwayat Perpanjangan</h6>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ count($revisionHistory) - 1 }} perpanjangan</span>
                 </div>
 
-                <div class="detail-label">Pihak</div>
-                <div class="detail-value" style="overflow-wrap: break-word; word-break: break-word;">{{ $mou->pihak }}</div>
+                <div class="revision-timeline">
+                    @php
+                        $visibleCount = 3;
+                        $totalRevisions = count($revisionHistory);
+                        $hideUntil = $totalRevisions - $visibleCount;
+                    @endphp
+                    @foreach($revisionHistory as $idx => $rev)
+                    @php
+                        $isLatest = $rev->id === $latestMouId;
+                        $isCurrent = $rev->id === $mou->id;
+                        $isLastAll = $idx === $totalRevisions - 1;
+                        $isHidden = $idx < $hideUntil;
+                        $statusIcons = [
+                            'aktif'     => 'ti ti-circle-check',
+                            'kadaluarsa'=> 'ti ti-clock',
+                            'dicabut'   => 'ti ti-circle-x',
+                        ];
+                        $icon = $statusIcons[$rev->status] ?? 'ti ti-file';
+                    @endphp
+                    <a href="{{ route('mou.show', $rev->id) }}" class="revision-item {{ $isCurrent ? 'current' : '' }} {{ ($isLastAll && !$isHidden) ? 'is-last' : '' }}" @if($isHidden) style="display:none;" id="revision-extra-{{ $idx }}" @endif>
+                        <div class="revision-node">
+                            <div class="revision-icon {{ $isCurrent ? 'active' : ($rev->status === 'aktif' ? 'success' : ($rev->status === 'dicabut' ? 'danger' : 'default')) }}">
+                                <i class="{{ $icon }}"></i>
+                            </div>
+                            @if(!$isLastAll)
+                            <div class="revision-line {{ $rev->status === 'aktif' ? 'line-success' : '' }}"></div>
+                            @endif
+                        </div>
+                        <div class="revision-content">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="fw-semibold {{ $isCurrent ? 'text-primary' : 'text-dark' }}" style="font-size: 13px;">
+                                    {{ $rev->versi === 1 ? 'Perjanjian Awal' : 'Perpanjangan #' . ($rev->versi - 1) }}
+                                </span>
+                                <span class="text-muted" style="font-size: 12px;">{{ $rev->nomor }}</span>
+                                @if($isCurrent)
+                                    <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 10px;">Sedang Dilihat</span>
+                                @elseif($isLatest)
+                                    <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 10px;">Aktif</span>
+                                @elseif($rev->status === 'dicabut')
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary" style="font-size: 10px;">Dicabut</span>
+                                @endif
+                            </div>
+                            <p class="mb-1 text-muted" style="font-size: 12px;">{{ $rev->pihak }}</p>
+                            <div class="d-flex align-items-center gap-3" style="font-size: 11.5px;">
+                                <span class="text-muted"><i class="ti ti-calendar" style="font-size: 12px;"></i> {{ $rev->mulai_perjanjian->format('d/m/Y') }} s/d {{ $rev->akhir_perjanjian->format('d/m/Y') }}</span>
+                            </div>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+                @if($totalRevisions > $visibleCount)
+                <button type="button" id="btn-toggle-revision" class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="toggleRevisionHistory()">
+                    <i class="ti ti-chevron-down me-1"></i> Lihat Semua Riwayat ({{ count($revisionHistory) - 1 }} perpanjangan)
+                </button>
+                @endif
+            </div>
+            @endif
 
-                <div class="detail-label">Judul</div>
-                <div class="detail-value" style="overflow-wrap: break-word; word-break: break-word;">{{ $mou->judul }}</div>
+            <hr class="my-4">
 
-                <div class="detail-label">Bidang</div>
-                <div class="detail-value">{{ $mou->bidang ? $mou->bidang->nama : '-' }}</div>
+                <div class="mb-3">
+                    <label class="text-muted text-uppercase small d-block mb-1">Pihak</label>
+                    <span class="fw-medium" style="word-break: break-word;">{{ $mou->pihak }}</span>
+                </div>
 
-                <div class="detail-label">Kategori</div>
-                <div class="detail-value">{{ $mou->kategori ? $mou->kategori->nama : '-' }}</div>
-
-                <div class="detail-label">Nomor</div>
-                <div class="detail-value">{{ $mou->nomor }}</div>
+                <div class="mb-3">
+                    <label class="text-muted text-uppercase small d-block mb-1">Judul</label>
+                    <span class="fw-medium" style="word-break: break-word;">{{ $mou->judul }}</span>
+                </div>
 
                 <div class="row mb-3">
                     <div class="col-6">
-                        <div class="detail-label">Mulai Perjanjian</div>
-                        <div class="detail-value" style="font-size: 14px;">{{ $mou->mulai_perjanjian ? $mou->mulai_perjanjian->format('d/m/Y') : '-' }}</div>
+                        <label class="text-muted text-uppercase small d-block mb-1">Bidang</label>
+                        <span class="fw-medium">{{ $mou->bidang ? $mou->bidang->nama : '-' }}</span>
                     </div>
                     <div class="col-6">
-                        <div class="detail-label">Akhir Perjanjian</div>
-                        <div class="detail-value" style="font-size: 14px;">{{ $mou->akhir_perjanjian ? $mou->akhir_perjanjian->format('d/m/Y') : '-' }}</div>
+                        <label class="text-muted text-uppercase small d-block mb-1">Kategori</label>
+                        <span class="fw-medium">{{ $mou->kategori ? $mou->kategori->nama : '-' }}</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-muted text-uppercase small d-block mb-1">Nomor</label>
+                    <span class="fw-medium">{{ $mou->nomor }}</span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="text-muted text-uppercase small d-block mb-1">Mulai Perjanjian</label>
+                        <span class="fw-medium">{{ $mou->mulai_perjanjian ? $mou->mulai_perjanjian->format('d/m/Y') : '-' }}</span>
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted text-uppercase small d-block mb-1">Akhir Perjanjian</label>
+                        <span class="fw-medium">{{ $mou->akhir_perjanjian ? $mou->akhir_perjanjian->format('d/m/Y') : '-' }}</span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-6">
-                        <div class="detail-label">Masa Berlaku</div>
-                        <div class="detail-value" style="font-size: 14px;">{{ $mou->masa_berlaku_formatted }}</div>
+                        <label class="text-muted text-uppercase small d-block mb-1">Masa Berlaku</label>
+                        <span class="fw-medium">{{ $mou->masa_berlaku_formatted }}</span>
                     </div>
                     <div class="col-6">
-                        <div class="detail-label">Keterangan</div>
-                        <div class="detail-value" style="font-size: 14px;">{{ $mou->keterangan }}</div>
+                        <label class="text-muted text-uppercase small d-block mb-1">Keterangan</label>
+                        <span class="fw-medium">{{ $mou->keterangan }}</span>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <div class="detail-label">Status</div>
+                    <label class="text-muted text-uppercase small d-block mb-1">Status</label>
                     @php
                         $labels = ['aktif' => 'Aktif', 'kadaluarsa' => 'Kadaluarsa', 'dicabut' => 'Dicabut'];
                         $colors = ['aktif' => 'success', 'kadaluarsa' => 'danger', 'dicabut' => 'secondary'];
                     @endphp
-                    <div><span class="badge bg-{{ $colors[$mou->status] ?? 'secondary' }}" style="font-size: 14px; padding: 8px 16px;">{{ $labels[$mou->status] ?? $mou->status }}</span></div>
+                    <span class="badge badge-{{ $mou->status }}" style="font-size: 13px; padding: 6px 12px;">{{ $labels[$mou->status] ?? $mou->status }}</span>
+                    @if($mou->versi > 1)
+                        <span class="badge bg-info" style="font-size: 13px; padding: 6px 12px;">Perpanjangan #{{ $mou->versi - 1 }}</span>
+                    @endif
                 </div>
 
-                <div class="mb-4">
-                    <div class="detail-label">Diupload oleh</div>
-                    <div class="detail-value" style="font-size: 14px;">{{ $mou->uploader->name ?? '-' }}</div>
+                <div class="mb-3">
+                    <label class="text-muted text-uppercase small d-block mb-1">Diupload oleh</label>
+                    <span class="fw-medium">{{ $mou->uploader->name ?? '-' }}</span>
                 </div>
 
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('mou.download', $mou->id) }}" class="btn btn-primary btn-sm">
                         <i class="ti ti-download me-1"></i> Download
                     </a>
+                    @can('upload dokumen')
+                    <a href="{{ route('mou.renew', $mou->id) }}" class="btn btn-outline-warning btn-sm">
+                        <i class="ti ti-refresh me-1"></i> Perpanjang
+                    </a>
+                    @endcan
                     @can('edit dokumen')
                     <a href="{{ route('mou.edit', $mou->id) }}" class="btn btn-outline-secondary btn-sm">
                         <i class="ti ti-pencil me-1"></i> Edit
@@ -136,6 +221,22 @@
 
 @section('scripts')
 <script>
+    function toggleRevisionHistory() {
+        var btn = document.getElementById('btn-toggle-revision');
+        var extras = document.querySelectorAll('[id^="revision-extra-"]');
+        var isExpanded = extras.length > 0 && extras[0].style.display !== 'none';
+
+        extras.forEach(function(el) {
+            el.style.display = isExpanded ? 'none' : '';
+        });
+
+        if (isExpanded) {
+            btn.innerHTML = '<i class="ti ti-chevron-down me-1"></i> Lihat Semua Riwayat ({{ count($revisionHistory) - 1 }} perpanjangan)';
+        } else {
+            btn.innerHTML = '<i class="ti ti-chevron-up me-1"></i> Tutup Riwayat';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         var url = '{{ route("mou.preview", $mou->id) }}';
         var pdfDoc = null;
@@ -152,11 +253,7 @@
                 var viewport = page.getViewport({ scale: scale });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
-
-                var renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
+                var renderContext = { canvasContext: ctx, viewport: viewport };
                 return page.render(renderContext).promise;
             }).then(function() {
                 document.getElementById('current-page').textContent = num;

@@ -173,6 +173,50 @@
         <nav class="navbar-custom" id="navbar-custom">
             <ul class="list-unstyled topbar-nav float-end mb-0">
                 <li class="dropdown">
+                    <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false" style="position: relative;">
+                        <i class="ti ti-bell" style="font-size: 20px;"></i>
+                        @if($notifikasiCount > 0)
+                            <span class="position-absolute badge rounded-pill bg-danger" style="font-size: 10px; padding: 2px 5px; top: 2px; right: -4px; min-width: 18px;">{{ $notifikasiCount }}</span>
+                        @endif
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" style="width: 380px; max-height: 420px; overflow-y: auto;">
+                        <h6 class="dropdown-header" style="font-size: 13px;">Notifikasi Peringatan</h6>
+
+                        @if($expiringMou->count() > 0)
+                            <div class="px-3 py-1 text-muted" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                                <i class="ti ti-note me-1"></i> MOU ({{ $expiringMou->count() }})
+                            </div>
+                            @foreach($expiringMou as $m)
+                                <a class="dropdown-item py-2" href="{{ route('mou.show', $m->id) }}">
+                                    <div class="fw-medium" style="font-size: 13px;">{{ Str::limit($m->judul, 40) }}</div>
+                                    <small class="text-muted" style="font-size: 12px;">{{ $m->nomor }} · s/d {{ $m->akhir_perjanjian->format('d/m/Y') }}</small>
+                                    <div class="mt-1"><span class="badge bg-warning text-dark" style="font-size: 10px; padding: 3px 6px;">{{ $m->akhir_perjanjian->diffForHumans() }}</span></div>
+                                </a>
+                            @endforeach
+                        @endif
+
+                        @if($expiringDoc->count() > 0)
+                            <div class="px-3 py-1 text-muted" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                                <i class="ti ti-file-text me-1"></i> Dokumen ({{ $expiringDoc->count() }})
+                            </div>
+                            @foreach($expiringDoc as $d)
+                                <a class="dropdown-item py-2" href="{{ route('documents.show', $d->id) }}">
+                                    <div class="fw-medium" style="font-size: 13px;">{{ Str::limit($d->nama_dokumen, 40) }}</div>
+                                    <small class="text-muted" style="font-size: 12px;">{{ $d->nomor_dokumen }} · s/d {{ $d->tanggal_berlaku->format('d/m/Y') }}</small>
+                                    <div class="mt-1"><span class="badge bg-warning text-dark" style="font-size: 10px; padding: 3px 6px;">{{ $d->tanggal_berlaku->diffForHumans() }}</span></div>
+                                </a>
+                            @endforeach
+                        @endif
+
+                        @if($expiringMou->count() === 0 && $expiringDoc->count() === 0)
+                            <div class="text-center py-4 px-3">
+                                <i class="ti ti-check-circle text-success" style="font-size: 28px;"></i>
+                                <p class="text-muted mt-2 mb-0" style="font-size: 13px;">Tidak ada peringatan saat ini</p>
+                            </div>
+                        @endif
+                    </div>
+                </li>
+                <li class="dropdown">
                     <a class="nav-link dropdown-toggle nav-user" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                         <div class="d-flex align-items-center">
                             @if (auth()->user()->avatar)

@@ -64,6 +64,9 @@ Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group
         Route::middleware('can:upload dokumen')->group(function () {
             Route::get('/create', [MouController::class, 'create'])->name('create');
             Route::post('/', [MouController::class, 'store'])->name('store');
+            Route::get('/select-renew', [MouController::class, 'selectRenew'])->name('select-renew');
+            Route::get('/{mou}/renew', [MouController::class, 'renew'])->name('renew');
+            Route::post('/renew', [MouController::class, 'storeRenewal'])->name('renew.store');
         });
 
         Route::middleware('can:edit dokumen')->group(function () {
