@@ -3,6 +3,19 @@
 @section('title', isset($defaultStatus) && $defaultStatus === 'aktif' ? 'Dokumen Aktif - HAMORA' : (isset($defaultStatus) && $defaultStatus === 'kadaluarsa' ? 'Dokumen Kadaluarsa - HAMORA' : (($defaultStatus ?? false) ? ucfirst($defaultStatus) . ' - HAMORA' : 'Dokumen - HAMORA')))
 
 @section('content')
+<style>
+    #filterRow { display: block; }
+    @media (max-width: 767.98px) {
+        #filterRow { display: none !important; }
+        #filterRow.mobile-show { display: block !important; }
+        .btn-upload-text { display: none; }
+        .card-body { overflow-x: auto; }
+        #documents-table { min-width: 580px; }
+        #documents-table td, #documents-table th { white-space: nowrap; font-size: 12px; padding: 6px 8px; }
+        .dataTables_info { font-size: 11px; }
+        .dataTables_length select, .dataTables_length label { font-size: 12px; }
+    }
+</style>
 @if(isset($defaultStatus) && in_array($defaultStatus, ['aktif', 'kadaluarsa']))
 <style>
     #filter-group-kategori, #filter-group-status { display: none !important; }
@@ -38,7 +51,7 @@
                         <p class="text-muted mb-0" style="font-size: 12.5px;">{{ $pageDesc }}</p>
                     </div>
                     <div class="d-flex align-items-center gap-1">
-                        <button class="btn btn-outline-secondary btn-sm d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterRow" aria-expanded="false" aria-controls="filterRow" title="Filter">
+                        <button class="btn btn-outline-secondary btn-sm d-md-none" type="button" onclick="document.getElementById('filterRow').classList.toggle('mobile-show')" title="Filter">
                             <i class="ti ti-filter"></i>
                         </button>
                         @if(!isset($defaultStatus) || !in_array($defaultStatus, ['aktif', 'kadaluarsa']))
@@ -57,7 +70,7 @@
                     </div>
                 </div>
 
-                <div class="collapse" id="filterRow">
+                <div id="filterRow">
                     <div class="row g-2 align-items-end mb-3">
                         <div class="col-6 col-md-3 col-lg-2">
                             <label class="form-label">Cari</label>

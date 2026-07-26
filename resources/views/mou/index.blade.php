@@ -3,6 +3,19 @@
 @section('title', 'MOU - HAMORA')
 
 @section('content')
+<style>
+    #filterRow { display: block; }
+    @media (max-width: 767.98px) {
+        #filterRow { display: none !important; }
+        #filterRow.mobile-show { display: block !important; }
+        .btn-upload-text { display: none; }
+        .card-body { overflow-x: auto; }
+        #mou-table { min-width: 580px; }
+        #mou-table td, #mou-table th { white-space: nowrap; font-size: 12px; padding: 6px 8px; }
+        .dataTables_info { font-size: 11px; }
+        .dataTables_length select, .dataTables_length label { font-size: 12px; }
+    }
+</style>
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
@@ -27,7 +40,7 @@
                         <p class="text-muted mb-0" style="font-size: 12.5px;">Kelola seluruh MOU dan perjanjian kerja sama</p>
                     </div>
                     <div class="d-flex align-items-center gap-1">
-                        <button class="btn btn-outline-secondary btn-sm d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterRow" aria-expanded="false" aria-controls="filterRow" title="Filter">
+                        <button class="btn btn-outline-secondary btn-sm d-md-none" type="button" onclick="document.getElementById('filterRow').classList.toggle('mobile-show')" title="Filter">
                             <i class="ti ti-filter"></i>
                         </button>
                         @can('upload dokumen')
@@ -45,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="collapse" id="filterRow">
+                <div id="filterRow">
                     <div class="row g-2 align-items-end mb-3">
                         <div class="col-6 col-md-4 col-lg-3">
                             <label class="form-label">Cari</label>
