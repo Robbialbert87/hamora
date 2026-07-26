@@ -19,7 +19,7 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item active">{{ $pageTitle }}</li>
                 </ol>
             </div>
@@ -37,6 +37,21 @@
                         <h5 class="card-title mb-0">{{ $pageTitle }}</h5>
                         <p class="text-muted mb-0" style="font-size: 12.5px;">{{ $pageDesc }}</p>
                     </div>
+                    @if(!isset($defaultStatus) || !in_array($defaultStatus, ['aktif', 'kadaluarsa']))
+                    <div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti ti-plus"></i> Upload
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ route('documents.create.baru') }}"><i class="ti ti-file-text me-2"></i>Dokumen Baru</a></li>
+                                <li><a class="dropdown-item" href="{{ route('mou.create') }}"><i class="ti ti-note me-2"></i>MOU / Kerja Sama</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('documents.create.update') }}"><i class="ti ti-refresh me-2"></i>Update / Revisi</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 <div class="row g-2 align-items-end mb-3">
@@ -62,7 +77,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2 col-lg-2" id="filter-group-kategori">
+                    <div class="col-md-2 col-lg-3" id="filter-group-kategori">
                         <label class="form-label">Kategori</label>
                         <select id="filter-kategori" class="form-select form-select-sm">
                             <option value="">Semua</option>
@@ -71,7 +86,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2 col-lg-2" id="filter-group-status">
+                    <div class="col-md-2 col-lg-3" id="filter-group-status">
                         <label class="form-label">Status</label>
                         <select id="filter-status" class="form-select form-select-sm">
                             <option value="">Semua</option>
@@ -88,30 +103,24 @@
                         <div class="d-flex gap-1 align-items-center">
                             <button class="btn btn-primary btn-sm" id="btn-cari"><i class="ti ti-search"></i></button>
                             <button class="btn btn-outline-secondary btn-sm" id="btn-reset"><i class="ti ti-refresh"></i></button>
-                            @if(!isset($defaultStatus) || !in_array($defaultStatus, ['aktif', 'kadaluarsa']))
-                            <div class="vr mx-1 d-none d-lg-block"></div>
-                            <a href="{{ route('documents.create') }}" class="btn btn-success btn-sm" title="Upload Dokumen"><i class="ti ti-upload"></i></a>
-                            @endif
                         </div>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover w-100" id="documents-table" style="border-collapse: separate; border-spacing: 0;">
-                        <thead>
-                            <tr>
-                                <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nomor Dokumen</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nama Dokumen</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Bidang</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Kategori</th>
-                                <th class="text-center" style="width: 105px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Terbit</th>
-                                <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Status</th>
-                                <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <table class="table table-sm table-hover w-100" id="documents-table" style="border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nomor Dokumen</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nama Dokumen</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Bidang</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Kategori</th>
+                            <th class="text-center" style="width: 105px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Terbit</th>
+                            <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Status</th>
+                            <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>

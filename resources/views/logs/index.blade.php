@@ -9,7 +9,7 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item active">Log Aktivitas</li>
                 </ol>
             </div>
@@ -27,19 +27,17 @@
                     <p class="text-muted mb-0">Riwayat aktivitas pengguna</p>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered w-100" id="logs-table">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>User</th>
-                                <th>Aksi</th>
-                                <th>Deskripsi</th>
-                                <th>Waktu</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <table class="table table-sm table-hover w-100" id="logs-table" style="border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">User</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Deskripsi</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Waktu</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
@@ -52,7 +50,7 @@
         $('#logs-table').DataTable({
             processing: true,
             serverSide: true,
-            responsive: true,
+            responsive: false,
             ajax: '{{ route("logs.data") }}',
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },

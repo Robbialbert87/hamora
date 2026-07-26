@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
+use App\Models\Mou;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
@@ -48,6 +49,9 @@ class KategoriController extends Controller
     {
         if ($kategori->documents()->count() > 0) {
             return back()->with('error', 'Kategori tidak bisa dihapus karena masih memiliki dokumen.');
+        }
+        if (Mou::where('kategori_id', $kategori->id)->exists()) {
+            return back()->with('error', 'Kategori tidak bisa dihapus karena masih terkait dengan data MOU.');
         }
         $kategori->delete();
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus.');

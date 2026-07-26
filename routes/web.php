@@ -59,6 +59,7 @@ Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group
     Route::prefix('mou')->name('mou.')->group(function () {
         Route::get('/', [MouController::class, 'index'])->name('index');
         Route::get('/data', [MouController::class, 'data'])->name('data');
+        Route::get('/trashed', [MouController::class, 'trashed'])->name('trashed');
 
         Route::middleware('can:upload dokumen')->group(function () {
             Route::get('/create', [MouController::class, 'create'])->name('create');
@@ -72,6 +73,11 @@ Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group
 
         Route::middleware('can:hapus dokumen')->group(function () {
             Route::delete('/{mou}', [MouController::class, 'destroy'])->name('destroy');
+            Route::delete('/{id}/force-delete', [MouController::class, 'forceDelete'])->name('force-delete');
+        });
+
+        Route::middleware('can:restore dokumen')->group(function () {
+            Route::post('/{id}/restore', [MouController::class, 'restore'])->name('restore');
         });
 
         Route::get('/{mou}/download', [MouController::class, 'download'])->name('download');

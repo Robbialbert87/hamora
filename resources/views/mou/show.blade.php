@@ -9,7 +9,7 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="{{ route('mou.index') }}">MOU</a></li>
                     <li class="breadcrumb-item active">{{ Str::limit($mou->judul, 30) }}</li>
                 </ol>

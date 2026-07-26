@@ -9,7 +9,7 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="{{ route('documents.index') }}">Dokumen</a></li>
                     <li class="breadcrumb-item active">{{ Str::limit($document->nama_dokumen, 30) }}</li>
                 </ol>
@@ -36,11 +36,17 @@
                 </div>
 
                 <div class="revision-timeline">
+                    @php
+                        $visibleCount = 3;
+                        $totalRevisions = count($revisionHistory);
+                        $hideUntil = $totalRevisions - $visibleCount;
+                    @endphp
                     @foreach($revisionHistory as $idx => $doc)
                     @php
                         $isLatest = $doc->id === $latestDocId;
                         $isCurrent = $doc->id === $document->id;
-                        $isLast = $idx === count($revisionHistory) - 1;
+                        $isLastAll = $idx === $totalRevisions - 1;
+                        $isHidden = $idx < $hideUntil;
                         $statusIcons = [
                             'aktif'     => 'ti ti-circle-check',
                             'draft'     => 'ti ti-pencil',
@@ -51,12 +57,12 @@
                         ];
                         $icon = $statusIcons[$doc->status] ?? 'ti ti-file';
                     @endphp
-                    <a href="{{ route('documents.show', $doc->id) }}" class="revision-item {{ $isCurrent ? 'current' : '' }} {{ $isLast ? 'is-last' : '' }}">
+                    <a href="{{ route('documents.show', $doc->id) }}" class="revision-item {{ $isCurrent ? 'current' : '' }} {{ ($isLastAll && !$isHidden) ? 'is-last' : '' }}" @if($isHidden) style="display:none;" id="revision-extra-{{ $idx }}" @endif>
                         <div class="revision-node">
                             <div class="revision-icon {{ $isCurrent ? 'active' : ($doc->status === 'aktif' ? 'success' : ($doc->status === 'dicabut' ? 'danger' : 'default')) }}">
                                 <i class="{{ $icon }}"></i>
                             </div>
-                            @if(!$isLast)
+                            @if(!$isLastAll)
                             <div class="revision-line {{ $doc->status === 'aktif' ? 'line-success' : '' }}"></div>
                             @endif
                         </div>
@@ -74,8 +80,8 @@
                             </div>
                             <p class="mb-1 text-muted" style="font-size: 12px;">{{ $doc->nama_dokumen }}</p>
                             <div class="d-flex align-items-center gap-3" style="font-size: 11.5px;">
-                                @if($doc->creator)
-                                <span class="text-muted"><i class="ti ti-user" style="font-size: 12px;"></i> {{ $doc->creator->name }}</span>
+                                @if($doc->uploader)
+                                <span class="text-muted"><i class="ti ti-user" style="font-size: 12px;"></i> {{ $doc->uploader->name }}</span>
                                 @endif
                                 <span class="text-muted"><i class="ti ti-calendar" style="font-size: 12px;"></i> {{ $doc->updated_at ? $doc->updated_at->format('d M Y') : '-' }}</span>
                             </div>
@@ -83,6 +89,11 @@
                     </a>
                     @endforeach
                 </div>
+                @if($totalRevisions > $visibleCount)
+                <button type="button" id="btn-toggle-revision" class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="toggleRevisionHistory()">
+                    <i class="ti ti-chevron-down me-1"></i> Lihat Semua Riwayat ({{ $totalRevisions }} versi)
+                </button>
+                @endif
             </div>
             @endif
 
@@ -165,6 +176,18 @@
                         <i class="ti ti-pencil me-1"></i> Edit
                     </a>
                     @endcan
+                    @can('upload dokumen')
+                    @if(in_array($document->status, ['aktif', 'kadaluarsa', 'direvisi']))
+                    <div class="dropdown">
+                        <button class="btn btn-outline-warning btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ti ti-refresh me-1"></i> Revisi
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('documents.create.update') }}"><i class="ti ti-pencil me-2"></i>Pilih Jenis Revisi</a></li>
+                        </ul>
+                    </div>
+                    @endif
+                    @endcan
                     <a href="{{ route('documents.index') }}" class="btn btn-outline-secondary btn-sm">
                         <i class="ti ti-arrow-left me-1"></i> Kembali
                     </a>
@@ -212,6 +235,22 @@
 
 @section('scripts')
 <script>
+    function toggleRevisionHistory() {
+        var btn = document.getElementById('btn-toggle-revision');
+        var extras = document.querySelectorAll('[id^="revision-extra-"]');
+        var isExpanded = extras.length > 0 && extras[0].style.display !== 'none';
+
+        extras.forEach(function(el) {
+            el.style.display = isExpanded ? 'none' : '';
+        });
+
+        if (isExpanded) {
+            btn.innerHTML = '<i class="ti ti-chevron-down me-1"></i> Lihat Semua Riwayat ({{ $totalRevisions }} versi)';
+        } else {
+            btn.innerHTML = '<i class="ti ti-chevron-up me-1"></i> Tutup Riwayat';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         var url = '{{ route("documents.preview", $document->id) }}';
         var pdfDoc = null;

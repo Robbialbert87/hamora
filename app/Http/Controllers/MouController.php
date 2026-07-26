@@ -115,7 +115,7 @@ class MouController extends Controller
             $akhir = $mulai->copy()->addDays((int) $request->masa_berlaku);
         } elseif ($request->filled('akhir_perjanjian')) {
             $akhir = \Carbon\Carbon::parse($request->akhir_perjanjian);
-            $request->merge(['masa_berlaku' => $mulai->diffInDays($akhir)]);
+            $request->merge(['masa_berlaku' => (int) $mulai->diffInDays($akhir)]);
         } else {
             return back()->withErrors(['akhir_perjanjian' => 'Isi masa berlaku atau akhir perjanjian'])->withInput();
         }
@@ -177,7 +177,7 @@ class MouController extends Controller
             $akhir = $mulai->copy()->addDays((int) $request->masa_berlaku);
         } elseif ($request->filled('akhir_perjanjian')) {
             $akhir = \Carbon\Carbon::parse($request->akhir_perjanjian);
-            $request->merge(['masa_berlaku' => $mulai->diffInDays($akhir)]);
+            $request->merge(['masa_berlaku' => (int) $mulai->diffInDays($akhir)]);
         } else {
             return back()->withErrors(['akhir_perjanjian' => 'Isi masa berlaku atau akhir perjanjian'])->withInput();
         }
@@ -205,11 +205,14 @@ class MouController extends Controller
             $filePath = 'mou/' . $fileName;
             Storage::disk('public')->put($filePath, file_get_contents($file->getPathname()));
 
-            Storage::disk('public')->delete($mou->file_pdf);
             $data['file_pdf'] = $filePath;
         }
 
         $mou->update($data);
+
+        if (isset($data['file_pdf']) && $data['file_pdf'] !== $mou->file_pdf) {
+            Storage::disk('public')->delete($mou->getOriginal('file_pdf'));
+        }
 
         ActivityLog::log('update_mou', "Update MOU: {$mou->judul}");
 
@@ -221,6 +224,32 @@ class MouController extends Controller
         $mou->delete();
         ActivityLog::log('hapus_mou', "Hapus MOU: {$mou->judul}");
         return response()->json(['success' => true]);
+    }
+
+    public function trashed()
+    {
+        $mou = Mou::onlyTrashed()->with(['uploader', 'bidang', 'kategori'])->get();
+        return view('mou.trashed', compact('mou'));
+    }
+
+    public function restore($id)
+    {
+        $mou = Mou::withTrashed()->findOrFail($id);
+        $mou->restore();
+        ActivityLog::log('restore_mou', "Restore MOU: {$mou->judul}");
+        return redirect()->route('mou.index')->with('success', 'MOU berhasil direstore.');
+    }
+
+    public function forceDelete($id)
+    {
+        $mou = Mou::withTrashed()->findOrFail($id);
+        $judul = $mou->judul;
+        if ($mou->file_pdf && Storage::disk('public')->exists($mou->file_pdf)) {
+            Storage::disk('public')->delete($mou->file_pdf);
+        }
+        $mou->forceDelete();
+        ActivityLog::log('hapus_permanen_mou', "Hapus permanen MOU: {$judul}");
+        return redirect()->route('mou.trashed')->with('success', 'MOU berhasil dihapus permanen.');
     }
 
     public function download(Mou $mou)

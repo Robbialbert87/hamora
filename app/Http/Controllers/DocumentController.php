@@ -32,6 +32,10 @@ class DocumentController extends Controller
 
     public function byStatus($status)
     {
+        $allowed = ['aktif', 'kadaluarsa', 'dicabut'];
+        if (!in_array($status, $allowed)) {
+            abort(404);
+        }
         $bidang = Bidang::all();
         $kategori = Kategori::all();
         return view('documents.index', compact('bidang', 'kategori'))->with('defaultStatus', $status);
@@ -121,9 +125,7 @@ class DocumentController extends Controller
 
     public function create()
     {
-        $bidang = Bidang::all();
-        $kategori = Kategori::all();
-        return view('documents.create', compact('bidang', 'kategori'));
+        return redirect()->route('documents.create.baru');
     }
 
     public function createBaru()
@@ -224,6 +226,10 @@ class DocumentController extends Controller
 
         try {
             if (in_array($jenisUpload, ['revisi', 'update'])) {
+                if (!$request->hasFile('file_pdf')) {
+                    return back()->withInput()->with('error', 'File PDF wajib diupload untuk revisi/update dokumen.');
+                }
+
                 $parentDocument = Document::findOrFail($validated['parent_document_id']);
 
                 if ($validated['nomor_dokumen'] && $validated['nomor_dokumen'] === $parentDocument->nomor_dokumen && $validated['tanggal_terbit'] === $parentDocument->tanggal_terbit?->format('Y-m-d')) {
@@ -239,9 +245,7 @@ class DocumentController extends Controller
                 }
 
                 $parentStatus = $jenisUpload === 'update' ? 'diubah' : 'direvisi';
-                if ($request->hasFile('file_pdf')) {
-                    $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'), $parentStatus);
-                }
+                $this->documentService->createRevision($parentDocument, $validated, $request->file('file_pdf'), $parentStatus);
             } elseif ($request->hasFile('file_pdf')) {
                 $this->documentService->createDocument($validated, $request->file('file_pdf'));
             }
@@ -272,7 +276,8 @@ class DocumentController extends Controller
     {
         $bidang = Bidang::all();
         $kategori = Kategori::all();
-        return view('documents.edit', compact('document', 'bidang', 'kategori'));
+        $documents = Document::whereIn('status', ['aktif', 'kadaluarsa', 'direvisi', 'dicabut', 'diubah'])->get();
+        return view('documents.edit', compact('document', 'bidang', 'kategori', 'documents'));
     }
 
     public function update(Request $request, Document $document)

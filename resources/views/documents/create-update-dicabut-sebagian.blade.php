@@ -9,8 +9,8 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('documents.index') }}">Dokumen</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('documents.create.update') }}">Dokumen</a></li>
                     <li class="breadcrumb-item active">Dicabut Sebagian</li>
                 </ol>
             </div>
@@ -23,12 +23,9 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h4 class="card-title mb-0">Dicabut Sebagian</h4>
-                        <p class="text-muted mb-0">Revisi parsial dimana poin tertentu dihapus dari dokumen</p>
-                    </div>
-                    <a href="{{ route('documents.create.update') }}" class="btn btn-outline-secondary btn-sm"><i class="ti ti-arrow-left"></i> Kembali</a>
+                <div class="mb-3">
+                    <h4 class="card-title mb-0">Form Update Dokumen - Dicabut Sebagian</h4>
+                    <p class="text-muted mb-0">Revisi parsial dimana poin tertentu dihapus dari dokumen</p>
                 </div>
 
                 <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data" id="formUpload" novalidate>
@@ -47,11 +44,11 @@
                         <label class="form-label">Cari Dokumen yang akan direvisi parsial <span class="text-danger">*</span></label>
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="filterPencarian"
+                                <input type="text" class="form-control form-control-sm" id="filterPencarian"
                                     placeholder="Cari Nomor atau Nama Dokumen" autocomplete="off">
                             </div>
                             <div class="col-md-6">
-                                <select class="form-select" id="filterBidang">
+                                <select class="form-select form-select-sm" id="filterBidang">
                                     <option value="">Semua Bidang</option>
                                     @foreach ($bidang ?? [] as $b)
                                         <option value="{{ $b->id }}">{{ $b->nama }}</option>
@@ -59,7 +56,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select class="form-select" id="filterKategori">
+                                <select class="form-select form-select-sm" id="filterKategori">
                                     <option value="">Semua Kategori</option>
                                     @foreach ($kategori ?? [] as $k)
                                         <option value="{{ $k->id }}">{{ $k->nama }}</option>
@@ -67,7 +64,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select class="form-select" id="filterTahun">
+                                <select class="form-select form-select-sm" id="filterTahun">
                                     <option value="">Semua Tahun</option>
                                     @foreach (range(date('Y') + 1, date('Y') - 10) as $thn)
                                         <option value="{{ $thn }}">{{ $thn }}</option>
@@ -195,13 +192,13 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label class="form-label">Deskripsi</label>
-                                <textarea name="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" rows="4">{{ old('deskripsi') }}</textarea>
+                                <textarea name="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" rows="2" placeholder="Ringkasan isi dokumen...">{{ old('deskripsi') }}</textarea>
                                 @error('deskripsi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">File PDF <span class="text-danger">*</span></label>
                                 <input type="file" name="file_pdf"
@@ -215,9 +212,9 @@
                         </div>
                     </div>
 
-                    <div class="mt-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary btn-sm"><i class="ti ti-device-floppy me-1"></i> Simpan</button>
+                    <div class="mt-3 text-end">
                         <a href="{{ route('documents.create.update') }}" class="btn btn-outline-secondary btn-sm"><i class="ti ti-arrow-left me-1"></i> Kembali</a>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="ti ti-device-floppy me-1"></i> Simpan</button>
                     </div>
                 </form>
             </div>

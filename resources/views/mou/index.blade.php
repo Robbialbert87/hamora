@@ -8,7 +8,7 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item active">MOU</li>
                 </ol>
             </div>
@@ -26,6 +26,13 @@
                         <h5 class="card-title mb-0">MOU</h5>
                         <p class="text-muted mb-0" style="font-size: 12.5px;">Kelola seluruh MOU dan perjanjian kerja sama</p>
                     </div>
+                    @can('upload dokumen')
+                    <div>
+                        <a href="{{ route('mou.create') }}" class="btn btn-primary btn-sm">
+                            <i class="ti ti-upload"></i> Upload MOU
+                        </a>
+                    </div>
+                    @endcan
                 </div>
 
                 <div class="row g-2 align-items-end mb-3">
@@ -33,7 +40,7 @@
                         <label class="form-label">Cari</label>
                         <input type="text" id="filter-cari" class="form-control form-control-sm" placeholder="Pihak, judul, atau nomor...">
                     </div>
-                    <div class="col-md-2 col-lg-2">
+                    <div class="col-md-2 col-lg-3">
                         <label class="form-label">Status</label>
                         <select id="filter-status" class="form-select form-select-sm">
                             <option value="">Semua</option>
@@ -47,10 +54,6 @@
                         <div class="d-flex gap-1 align-items-center">
                             <button class="btn btn-primary btn-sm" id="btn-cari"><i class="ti ti-search"></i></button>
                             <button class="btn btn-outline-secondary btn-sm" id="btn-reset"><i class="ti ti-refresh"></i></button>
-                            @can('upload dokumen')
-                            <div class="vr mx-1 d-none d-lg-block"></div>
-                            <a href="{{ route('mou.create') }}" class="btn btn-success btn-sm" title="Upload MOU"><i class="ti ti-upload"></i></a>
-                            @endcan
                             <div class="vr mx-1 d-none d-lg-block"></div>
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary btn-sm btn-icon" type="button" data-bs-toggle="dropdown" title="Pilih Kolom"><i class="ti ti-columns"></i></button>
@@ -75,26 +78,24 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover w-100" id="mou-table" style="border-collapse: separate; border-spacing: 0;">
-                        <thead>
-                            <tr>
-                                <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Pihak</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Judul</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Bidang</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Kategori</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nomor</th>
-                                <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Mulai</th>
-                                <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Masa Berlaku</th>
-                                <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Akhir</th>
-                                <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Keterangan</th>
-                                <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Status</th>
-                                <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <table class="table table-sm table-hover w-100" id="mou-table" style="border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Pihak</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Judul</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Bidang</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Kategori</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nomor</th>
+                            <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Mulai</th>
+                            <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Masa Berlaku</th>
+                            <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Akhir</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Keterangan</th>
+                            <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Status</th>
+                            <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>

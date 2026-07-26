@@ -9,7 +9,7 @@
         <div class="page-title-box">
             <div class="float-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">HAMORA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item active">Users</li>
                 </ol>
             </div>
@@ -34,70 +34,68 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="users-table">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>NIP</th>
-                                <th>Bidang</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($users ?? [] as $user)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-soft-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; min-width: 36px;">
-                                            <span class="fw-bold text-primary">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                                        </div>
-                                        <span class="fw-medium">{{ $user->name }}</span>
+                <table class="table table-sm table-hover w-100" id="users-table" style="border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nama</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">NIP</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Bidang</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Role</th>
+                            <th class="text-center" style="width: 90px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Status</th>
+                            <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($users ?? [] as $user)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-soft-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; min-width: 36px;">
+                                        <span class="fw-bold text-primary">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                                     </div>
-                                </td>
-                                <td>{{ $user->nip ?? '-' }}</td>
-                                <td>{{ $user->bidang->nama ?? '-' }}</td>
-                                <td>
-                                    @foreach($user->roles as $role)
-                                    <span class="badge bg-soft-primary text-primary">
-                                        {{ ucfirst($role->name) }}
-                                    </span>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @if($user->is_active)
-                                    <span class="badge bg-soft-success text-success">Aktif</span>
-                                    @else
-                                    <span class="badge bg-soft-warning text-warning">Nonaktif</span>
+                                    <span class="fw-medium">{{ $user->name }}</span>
+                                </div>
+                            </td>
+                            <td>{{ $user->nip ?? '-' }}</td>
+                            <td>{{ $user->bidang->nama ?? '-' }}</td>
+                            <td>
+                                @foreach($user->roles as $role)
+                                <span class="badge bg-soft-primary text-primary">
+                                    {{ ucfirst($role->name) }}
+                                </span>
+                                @endforeach
+                            </td>
+                            <td class="text-center">
+                                @if($user->is_active)
+                                <span class="badge bg-soft-success text-success">Aktif</span>
+                                @else
+                                <span class="badge bg-soft-warning text-warning">Nonaktif</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="ti ti-pencil"></i>
+                                    </a>
+                                    @if($user->id !== auth()->id())
+                                    <button class="btn btn-outline-danger btn-sm btn-delete-user"
+                                            data-url="{{ route('users.destroy', $user->id) }}"
+                                            data-name="{{ $user->name }}">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
                                     @endif
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-1">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-outline-primary btn-sm">
-                                            <i class="ti ti-pencil me-1"></i> Edit
-                                        </a>
-                                        @if($user->id !== auth()->id())
-                                        <button class="btn btn-outline-danger btn-sm btn-delete-user"
-                                                data-url="{{ route('users.destroy', $user->id) }}"
-                                                data-name="{{ $user->name }}">
-                                            <i class="ti ti-trash me-1"></i> Hapus
-                                        </button>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">Belum ada user</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Belum ada user</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -108,7 +106,7 @@
 <script>
     $(document).ready(function() {
         $('#users-table').DataTable({
-            responsive: true,
+            responsive: false,
             language: {
                 url: '/assets/lang/Indonesian.json'
             }

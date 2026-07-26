@@ -34,45 +34,43 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered mb-0" id="kategori-table">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>Slug</th>
-                                <th>Jumlah Dokumen</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($kategori ?? [] as $k)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $k->nama }}</td>
-                                <td><code>{{ $k->slug }}</code></td>
-                                <td>{{ $k->documents_count ?? $k->documents->count() }}</td>
-                                <td>
-                                    <div class="d-flex gap-1">
-                                        <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-outline-secondary btn-sm">
-                                            <i class="ti ti-pencil"></i> Edit
-                                        </a>
-                                        <button class="btn btn-outline-danger btn-sm btn-delete-kategori"
-                                                data-url="{{ route('kategori.destroy', $k->id) }}"
-                                                data-name="{{ $k->nama }}">
-                                            <i class="ti ti-trash"></i> Hapus
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">Belum ada kategori</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table table-sm table-hover w-100" id="kategori-table" style="border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Nama</th>
+                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Slug</th>
+                            <th class="text-center" style="width: 120px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Jumlah Dokumen</th>
+                            <th class="text-center" style="width: 100px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($kategori ?? [] as $k)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $k->nama }}</td>
+                            <td><code>{{ $k->slug }}</code></td>
+                            <td class="text-center">{{ $k->documents_count ?? $k->documents->count() }}</td>
+                            <td class="text-center">
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-outline-secondary btn-sm">
+                                        <i class="ti ti-pencil"></i>
+                                    </a>
+                                    <button class="btn btn-outline-danger btn-sm btn-delete-kategori"
+                                            data-url="{{ route('kategori.destroy', $k->id) }}"
+                                            data-name="{{ $k->nama }}">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Belum ada kategori</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -83,7 +81,7 @@
 <script>
     $(document).ready(function() {
         $('#kategori-table').DataTable({
-            responsive: true,
+            responsive: false,
             language: {
                 url: '/assets/lang/Indonesian.json'
             }

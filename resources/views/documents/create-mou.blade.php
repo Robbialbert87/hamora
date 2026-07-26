@@ -171,7 +171,7 @@
                     </div>
                     <div class="mt-3 d-flex gap-2">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="ti ti-device-floppy me-1"></i> Simpan</button>
-                        <a href="{{ route('documents.create') }}" class="btn btn-outline-secondary btn-sm"><i class="ti ti-arrow-left me-1"></i> Kembali</a>
+                        <a href="{{ route('documents.index') }}" class="btn btn-outline-secondary btn-sm"><i class="ti ti-arrow-left me-1"></i> Kembali</a>
                     </div>
                 </form>
             </div>

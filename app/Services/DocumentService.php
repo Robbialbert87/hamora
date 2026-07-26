@@ -93,6 +93,8 @@ class DocumentService
 
         $document = Document::create($data);
 
+        $this->createVersion($document, $data['file_pdf'] ?? null, "Revisi v{$document->versi}");
+
         $parentDocument->update(['status' => $parentStatus]);
 
         ActivityLog::log('upload', "Revisi dokumen: {$document->nama_dokumen} (v{$document->versi})", [

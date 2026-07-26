@@ -13,6 +13,8 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 
+    <style>:root{--bs-breadcrumb-divider:"/";}</style>
+
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.11/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
@@ -84,7 +86,7 @@
             <div class="topbar-left">
                 <a href="{{ route('dashboard') }}" class="logo">
                     <span>
-                        <img src="{{ asset('images/logo.webp') }}" alt="logo-large" class="logo-lg" style="height: 40px;">
+                        <h3 class="mb-0" style="font-weight: 700; color: #5156be;">HAMORA</h3>
                     </span>
                 </a>
             </div>
@@ -96,7 +98,7 @@
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Analytics</a>
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="ti ti-chart-bar me-1"></i> Analytics</a>
                         </li>
                     </ul>
                 </div>
@@ -104,36 +106,14 @@
                 <!-- Dokumen Menu -->
                 <div id="MetricaDokumen" class="main-icon-menu-pane tab-pane {{ $activeGroup === 'dokumen' ? 'active show' : '' }}" role="tabpanel" aria-labelledby="dokumen-tab">
                     <div class="title-box">
-                        <h6 class="menu-title">Dokumen</h6>
+                        <h6 class="menu-title">Arsip</h6>
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ (request()->routeIs('documents.index') && !request()->has('status')) || request()->routeIs('documents.trashed') ? 'active' : '' }}" href="{{ route('documents.index') }}">Semua Dokumen</a>
+                            <a class="nav-link {{ request()->routeIs('documents.*') && !request()->routeIs('documents.status*') ? 'active' : '' }}" href="{{ route('documents.index') }}"><i class="ti ti-file-text me-1"></i> Dokumen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('mou*') ? 'active' : '' }}" href="{{ route('mou.index') }}">MOU</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('documents.create') || request()->routeIs('documents.create.baru') || request()->routeIs('documents.create.mou') ? 'active' : '' }}" href="{{ route('documents.create') }}">Upload Dokumen</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('documents.create.update*') ? 'active' : '' }}" href="{{ route('documents.create.update') }}">Update Dokumen</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center {{ request()->routeIs('documents.status*') ? 'active' : '' }}" href="#sidebarStatusDokumen" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('documents.status') ? 'true' : 'false' }}">Status Dokumen <i class="ti ti-chevron-right collapse-icon ms-auto"></i></a>
-                            <div class="collapse {{ request()->routeIs('documents.status') ? 'show' : '' }}" id="sidebarStatusDokumen">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link {{ request()->routeIs('documents.status') && request()->route('status') === 'aktif' ? 'active' : '' }}" href="{{ route('documents.status', 'aktif') }}"><span class="submenu-dot"></span>Aktif</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link {{ request()->routeIs('documents.status') && request()->route('status') === 'kadaluarsa' ? 'active' : '' }}" href="{{ route('documents.status', 'kadaluarsa') }}"><span class="submenu-dot"></span>Kadaluarsa</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link {{ request()->routeIs('documents.status') && request()->route('status') === 'dicabut' ? 'active' : '' }}" href="{{ route('documents.status', 'dicabut') }}"><span class="submenu-dot"></span>Dicabut</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <a class="nav-link {{ request()->routeIs('mou.*') ? 'active' : '' }}" href="{{ route('mou.index') }}"><i class="ti ti-note me-1"></i> MOU</a>
                         </li>
                     </ul>
                 </div>
@@ -147,12 +127,12 @@
                     <ul class="nav flex-column">
                         @can('kelola bidang')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('bidang.*') ? 'active' : '' }}" href="{{ route('bidang.index') }}">Bidang</a>
+                            <a class="nav-link {{ request()->routeIs('bidang.*') ? 'active' : '' }}" href="{{ route('bidang.index') }}"><i class="ti ti-building me-1"></i> Bidang</a>
                         </li>
                         @endcan
                         @can('kelola kategori')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}" href="{{ route('kategori.index') }}">Kategori</a>
+                            <a class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}" href="{{ route('kategori.index') }}"><i class="ti ti-tag me-1"></i> Kategori</a>
                         </li>
                         @endcan
                     </ul>
@@ -168,17 +148,17 @@
                     <ul class="nav flex-column">
                         @can('kelola user')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Users</a>
+                            <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}"><i class="ti ti-user me-1"></i> Users</a>
                         </li>
                         @endcan
                         @can('kelola role')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">Role</a>
+                            <a class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}"><i class="ti ti-shield me-1"></i> Role</a>
                         </li>
                         @endcan
                         @can('lihat log')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}" href="{{ route('logs.index') }}">Log Aktivitas</a>
+                            <a class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}" href="{{ route('logs.index') }}"><i class="ti ti-clock me-1"></i> Log Aktivitas</a>
                         </li>
                         @endcan
                     </ul>

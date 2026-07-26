@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bidang;
+use App\Models\Mou;
 use Illuminate\Http\Request;
 
 class BidangController extends Controller
@@ -48,6 +49,9 @@ class BidangController extends Controller
     {
         if ($bidang->documents()->count() > 0) {
             return back()->with('error', 'Bidang tidak bisa dihapus karena masih memiliki dokumen.');
+        }
+        if (Mou::where('bidang_id', $bidang->id)->exists()) {
+            return back()->with('error', 'Bidang tidak bisa dihapus karena masih terkait dengan data MOU.');
         }
         $bidang->delete();
         return redirect()->route('bidang.index')->with('success', 'Bidang berhasil dihapus.');
