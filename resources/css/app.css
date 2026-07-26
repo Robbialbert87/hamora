@@ -1342,6 +1342,10 @@ table.dataTable thead th {
 }
 
 /* Mobile Responsive */
+@media (min-width: 768px) {
+    #filterRow { display: block !important; }
+}
+
 @media (max-width: 767.98px) {
     .btn-upload-text { display: none; }
 
