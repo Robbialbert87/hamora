@@ -30,11 +30,11 @@
                 <table class="table table-sm table-hover w-100" id="logs-table" style="border-collapse: separate; border-spacing: 0;">
                     <thead>
                         <tr>
-                            <th class="text-center" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
-                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">User</th>
-                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
-                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Deskripsi</th>
-                            <th style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Waktu</th>
+                            <th class="text-center" data-priority="4" style="width: 42px; background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">No</th>
+                            <th data-priority="1" style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">User</th>
+                            <th data-priority="2" style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Aksi</th>
+                            <th data-priority="5" style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Deskripsi</th>
+                            <th data-priority="3" style="background: #f8f9fa; font-size: 11.5px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 2px solid #dee2e6; padding: 8px 10px;">Waktu</th>
                         </tr>
                     </thead>
                 </table>
@@ -50,14 +50,14 @@
         $('#logs-table').DataTable({
             processing: true,
             serverSide: true,
-            responsive: false,
+            responsive: true,
             ajax: '{{ route("logs.data") }}',
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'user_name', name: 'user.name' },
-                { data: 'action_badge', name: 'action' },
-                { data: 'description', name: 'description' },
-                { data: 'created_at', name: 'created_at' }
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, responsivePriority: 4 },
+                { data: 'user_name', name: 'user.name', responsivePriority: 1 },
+                { data: 'action_badge', name: 'action', responsivePriority: 2 },
+                { data: 'description', name: 'description', responsivePriority: 5 },
+                { data: 'created_at', name: 'created_at', responsivePriority: 3 }
             ],
             language: {
                 url: '/assets/lang/Indonesian.json'
