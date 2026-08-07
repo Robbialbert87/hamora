@@ -28,17 +28,19 @@
                 <p class="text-muted mb-4">Informasi lengkap dokumen</p>
 
             {{-- Riwayat Dokumen --}}
-            @if(count($revisionHistory) > 0)
+            @php
+                $totalRevisions = count($revisionHistory);
+            @endphp
+            @if($totalRevisions > 0)
             <div class="mb-0">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title mb-0">Riwayat Revisi</h6>
-                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ count($revisionHistory) }} versi</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ $totalRevisions }} versi</span>
                 </div>
 
                 <div class="revision-timeline">
                     @php
                         $visibleCount = 3;
-                        $totalRevisions = count($revisionHistory);
                         $hideUntil = $totalRevisions - $visibleCount;
                     @endphp
                     @foreach($revisionHistory as $idx => $doc)
