@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 use App\Models\Mou;
 use App\Models\Document;
 
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
+
         View::composer('layouts.app', function ($view) {
             $expiringMou = Mou::where('status', 'aktif')
                 ->whereBetween('akhir_perjanjian', [now(), now()->addDays(30)])

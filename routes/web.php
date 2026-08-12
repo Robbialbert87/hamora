@@ -11,10 +11,16 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\MouController;
+use App\Http\Controllers\BuktiController;
+use App\Http\Controllers\PublicBuktiController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+
+Route::get('/b/{token}', [PublicBuktiController::class, 'form'])->name('bukti.publik.form');
+Route::post('/b/{token}', [PublicBuktiController::class, 'store'])->name('bukti.publik.store')->middleware('throttle:10,1');
+Route::get('/b/{token}/sukses', [PublicBuktiController::class, 'sukses'])->name('bukti.publik.sukses');
 
 Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -111,6 +117,26 @@ Route::middleware(['auth', 'check.active', 'check.must.change.password'])->group
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::put('password', [ProfileController::class, 'password'])->name('password');
+    });
+
+    Route::prefix('bukti')->name('bukti.')->middleware('can:kelola bukti')->group(function () {
+        Route::get('/', [BuktiController::class, 'index'])->name('index');
+        Route::get('/data', [BuktiController::class, 'data'])->name('data');
+        Route::get('/create', [BuktiController::class, 'create'])->name('create');
+        Route::post('/', [BuktiController::class, 'store'])->name('store');
+        Route::get('/{rekapBukti}/edit', [BuktiController::class, 'edit'])->name('edit');
+        Route::put('/{rekapBukti}', [BuktiController::class, 'update'])->name('update');
+        Route::delete('/{rekapBukti}', [BuktiController::class, 'destroy'])->name('destroy');
+        Route::post('/{rekapBukti}/toggle', [BuktiController::class, 'toggle'])->name('toggle');
+        Route::delete('/records/{record}', [BuktiController::class, 'destroyRecord'])->name('record.destroy');
+    });
+
+    Route::prefix('bukti')->name('bukti.')->middleware('can:lihat rekap bukti')->group(function () {
+        Route::get('/{rekapBukti}/report', [BuktiController::class, 'report'])->name('report');
+        Route::get('/{rekapBukti}/files/zip', [BuktiController::class, 'filesZip'])->name('files.zip');
+        Route::get('/{rekapBukti}', [BuktiController::class, 'show'])->name('show');
+        Route::get('/records/{record}/file/{file}', [BuktiController::class, 'preview'])->name('file.preview');
+        Route::get('/records/{record}/file/{file}/download', [BuktiController::class, 'download'])->name('file.download');
     });
 });
 

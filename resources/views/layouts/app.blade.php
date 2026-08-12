@@ -25,7 +25,7 @@
 
 @php
     $activeGroup = 'dashboard';
-    if (request()->routeIs('documents.*') || request()->routeIs('mou.*')) $activeGroup = 'dokumen';
+    if (request()->routeIs('documents.*') || request()->routeIs('mou.*') || request()->routeIs('bukti.*')) $activeGroup = 'dokumen';
     if (request()->routeIs('bidang.*') || request()->routeIs('kategori.*')) $activeGroup = 'pengaturan';
     if (request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('logs.*')) $activeGroup = 'user';
 @endphp
@@ -114,6 +114,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('mou.*') ? 'active' : '' }}" href="{{ route('mou.index') }}"><i class="ti ti-note me-1"></i> MOU</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('bukti.*') ? 'active' : '' }}" href="{{ route('bukti.index') }}"><i class="ti ti-database me-1"></i> Pengumpulan Data</a>
                         </li>
                     </ul>
                 </div>

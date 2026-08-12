@@ -16,6 +16,7 @@ class RolePermissionSeeder extends Seeder
             'kelola kategori', 'kelola bidang', 'verifikasi dokumen', 'edit metadata',
             'lihat log', 'upload dokumen', 'edit dokumen', 'lihat dokumen',
             'kelola role',
+            'kelola bukti', 'lihat rekap bukti',
         ];
 
         foreach ($permissions as $permission) {
@@ -30,6 +31,7 @@ class RolePermissionSeeder extends Seeder
             'kelola user', 'verifikasi dokumen', 'edit metadata', 'lihat log',
             'upload dokumen', 'edit dokumen', 'lihat dokumen',
             'kelola kategori', 'kelola bidang',
+            'kelola bukti', 'lihat rekap bukti',
         ]);
 
         $user = Role::firstOrCreate(['name' => 'User']);
