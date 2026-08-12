@@ -323,12 +323,15 @@ class BuktiController extends Controller
     {
         $files = RekapBuktiFile::where('rekap_bukti_id', $rekapBukti->id)
             ->whereNotNull('path')
+            ->with(['record', 'field'])
             ->get()
             ->filter(fn (RekapBuktiFile $file) => Storage::disk('public')->exists($file->path));
 
         if ($files->isEmpty()) {
             return back()->with('error', 'Belum ada file untuk diunduh.');
         }
+
+        $fieldPengirim = $this->cariFieldPengirim($rekapBukti);
 
         $zipPath = tempnam(sys_get_temp_dir(), 'bukti-zip-');
         if ($zipPath === false) {
@@ -344,7 +347,7 @@ class BuktiController extends Controller
         $usedNames = [];
 
         foreach ($files as $file) {
-            $entryName = $this->zipEntryName($file->nama_asli);
+            $entryName = $this->zipEntryName($this->namaEntriZip($file, $fieldPengirim));
 
             $finalName = $entryName;
             $counter = 2;
@@ -365,6 +368,37 @@ class BuktiController extends Controller
         return response()->download($zipPath, 'Bukti-' . $slug . '.zip', [
             'Content-Type' => 'application/zip',
         ])->deleteFileAfterSend(true);
+    }
+
+    protected function cariFieldPengirim(RekapBukti $rekap): ?RekapBuktiField
+    {
+        return $rekap->fields
+            ->first(fn (RekapBuktiField $field) => $field->tipe === 'text'
+                && preg_match('/nama|pengirim|identitas/i', (string) $field->label) === 1);
+    }
+
+    protected function namaEntriZip(RekapBuktiFile $file, ?RekapBuktiField $fieldPengirim): string
+    {
+        if ($fieldPengirim && $file->field && $file->record) {
+            $pengirim = trim((string) ($file->record->data[$fieldPengirim->id] ?? ''));
+
+            if ($pengirim !== '') {
+                $ext = pathinfo($file->nama_asli, PATHINFO_EXTENSION);
+                $base = $this->zipNamePart("{$pengirim} - {$file->field->label}");
+
+                return $ext !== '' ? "{$base}.{$ext}" : $base;
+            }
+        }
+
+        return $file->nama_asli;
+    }
+
+    protected function zipNamePart(string $text): string
+    {
+        $text = preg_replace('/[^\w\s.\-\x{0080}-\x{FFFF}]/u', '_', $text) ?? $text;
+        $text = trim($text);
+
+        return $text !== '' && $text !== '.' && $text !== '..' ? $text : 'file';
     }
 
     protected function zipEntryName(string $nama): string

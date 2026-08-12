@@ -41,6 +41,9 @@
                     </div>
                     <div class="col-md-4 text-md-end">
                         <div class="d-flex gap-1 justify-content-md-end">
+                            @if ($stats['total_entri'] > 0)
+                            <a href="{{ route('bukti.report', $rekapBukti->id) }}" class="btn btn-light-danger btn-icon" style="flex: 0 0 auto;" title="Unduh Laporan PDF"><i class="ti ti-file-text"></i></a>
+                            @endif
                             @if ($stats['total_file'] > 0)
                             <a href="{{ route('bukti.files.zip', $rekapBukti->id) }}" class="btn btn-light-primary btn-icon" style="flex: 0 0 auto;" title="Unduh Semua Bukti (ZIP)"><i class="ti ti-file-zip"></i></a>
                             @endif
