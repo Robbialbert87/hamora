@@ -81,29 +81,26 @@ class Document extends Model
 
     public function revisionHistory(): array
     {
-        $history = collect();
-
-        $ancestors = collect();
-        $current = $this->parent;
-        while ($current) {
-            $ancestors->push($current);
-            $current = $current->parent;
+        $root = $this;
+        while ($root->parent) {
+            $root = $root->parent;
         }
-        $history = $history->merge($ancestors->reverse());
 
-        $history->push($this);
-
-        $descendants = collect();
-        $current = $this->latestRevision();
-        while ($current) {
-            $descendants->push($current);
-            $current = $current->latestRevision();
+        $all = collect([$root]);
+        $queue = collect([$root]);
+        while ($queue->isNotEmpty()) {
+            $current = $queue->shift();
+            foreach ($current->revisions()->orderBy('created_at')->get() as $child) {
+                $all->push($child);
+                $queue->push($child);
+            }
         }
-        $history = $history->merge($descendants);
+
+        $history = $all->sortBy('versi')->values();
 
         if ($history->count() <= 1) return [];
 
-        return $history->values()->all();
+        return $history->all();
     }
 
     public function scopeAktif($query)

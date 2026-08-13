@@ -85,7 +85,7 @@ class DocumentService
         $data['parent_document_id'] = $parentDocument->id;
         $data['uploaded_by'] = auth()->id();
         $data['status'] = $data['status'] ?? 'draft';
-        $data['versi'] = $parentDocument->versi + 1;
+        $data['versi'] = $this->nextVersionNumber($parentDocument);
 
         if (!isset($data['nomor_dokumen'])) {
             $data['nomor_dokumen'] = $parentDocument->nomor_dokumen . '-R' . $data['versi'];
@@ -103,6 +103,26 @@ class DocumentService
         ]);
 
         return $document;
+    }
+
+    protected function nextVersionNumber(Document $parentDocument): int
+    {
+        $root = $parentDocument;
+        while ($root->parent) {
+            $root = $root->parent;
+        }
+
+        $versions = collect();
+        $queue = collect([$root]);
+        while ($queue->isNotEmpty()) {
+            $current = $queue->shift();
+            $versions->push($current->versi);
+            foreach ($current->revisions()->get() as $child) {
+                $queue->push($child);
+            }
+        }
+
+        return (int) $versions->max() + 1;
     }
 
     public function createVersion(Document $document, ?string $filePdf, string $keterangan = ''): DocumentVersion
