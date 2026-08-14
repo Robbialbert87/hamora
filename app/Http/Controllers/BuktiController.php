@@ -431,12 +431,6 @@ class BuktiController extends Controller
         $pdf->SetFont('Helvetica', 'B', 11);
         $pdf->Cell(0, 6, $this->pdfText($rekap->nama), 0, 1, 'C');
 
-        if ($rekap->deskripsi) {
-            $pdf->SetFont('Helvetica', '', 8.5);
-            $pdf->SetTextColor(80, 80, 80);
-            $pdf->MultiCell(0, 4, $this->pdfText($rekap->deskripsi), 0, 'C');
-        }
-
         $pdf->SetFont('Helvetica', '', 8.5);
         $pdf->SetTextColor(80, 80, 80);
         $pdf->Cell(0, 5, $this->pdfText("Jumlah entri: {$totalEntri}  |  Dicetak: " . now()->format('d/m/Y H:i')), 0, 1, 'C');
