@@ -32,7 +32,7 @@
                                 <span class="badge bg-secondary" id="status-badge">Link Nonaktif</span>
                             @endif
                         </div>
-                        <p class="text-muted mb-2" style="font-size: 13px;">{{ $rekapBukti->deskripsi ?: 'Tidak ada deskripsi' }}</p>
+                        <p class="text-muted mb-2" style="font-size: 13px;">@if ($rekapBukti->deskripsi){!! nl2br(e($rekapBukti->deskripsi)) !!}@else Tidak ada deskripsi @endif</p>
                         <p class="text-muted mb-0" style="font-size: 12px;">
                             <i class="ti ti-user me-1"></i>{{ $rekapBukti->creator?->name ?? '-' }} ·
                             <i class="ti ti-clock me-1"></i>{{ $rekapBukti->created_at->format('d/m/Y H:i') }} ·
