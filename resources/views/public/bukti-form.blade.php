@@ -9,7 +9,7 @@
             <div class="card-header py-3 px-4">
                 <h5 class="mb-0 fw-semibold" style="font-size: 17px;">{{ $rekap->nama }}</h5>
                 @if ($rekap->deskripsi)
-                    <p class="text-muted mb-0 mt-1" style="font-size: 13px;">{{ $rekap->deskripsi }}</p>
+                    <p class="text-muted mb-0 mt-1" style="font-size: 13px;">{!! nl2br(e($rekap->deskripsi)) !!}</p>
                 @endif
             </div>
             <div class="card-body px-4 py-4">
